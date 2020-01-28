@@ -58,20 +58,24 @@ under the License.
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-java</artifactId>
 			<version>${flink.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-rabbitmq_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
-
+		<dependency>
+		    <groupId>org.apache.flink</groupId>
+		    <artifactId>flink-core</artifactId>
+		    <version>${flink.version}</version>
+		</dependency>
 
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
