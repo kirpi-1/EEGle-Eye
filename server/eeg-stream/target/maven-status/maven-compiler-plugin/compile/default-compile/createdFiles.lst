@@ -1,0 +1,5 @@
+eegconsumer/EEGStream.class
+main/BatchJob.class
+main/StreamingJob.class
+eegconsumer/EEGStream$2.class
+eegconsumer/EEGStream$1.class
