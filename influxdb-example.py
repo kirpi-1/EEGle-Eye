@@ -6,7 +6,7 @@ import numpy as np
 token = os.environ['INFLUX_TOKEN']
 bucket = "test-bucket"
 org = "Insight"
-client = InfluxDBClient(url="http://localhost:9999",token=token,org="Insight")
+client = InfluxDBClient(url="http://10.0.0.12:9999",token=token,org="Insight")
 write_api = client.write_api(write_options=SYNCHRONOUS)
 query_api = client.query_api()
 
