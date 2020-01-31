@@ -38,7 +38,7 @@ public class ArrayStream{
 			.build();
 		//use Tuple2<String, int[]> next
 		DataStream<Tuple2<Integer,int[]>> stream = env.addSource(
-			new RMQSource<int[]>(
+			new RMQSource<Tuple2<Integer,int[]>>(
 				connectionConfig,
 				"array",
 				true,
