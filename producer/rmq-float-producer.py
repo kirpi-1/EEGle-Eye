@@ -45,7 +45,7 @@ while(True):
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)
 	signal = signal / len(freqs);
-	print("    [x] Sending ints from {} to {}".format(d[0],d[-1]))
+	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
 						properties=props,
