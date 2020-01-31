@@ -1,5 +1,4 @@
+eegProcess/EEGProcessAllWindowFunction.class
+deserializationSchemas/EEGDeserializationSchema.class
 eegconsumer/EEGStream.class
-main/BatchJob.class
-main/StreamingJob.class
-eegconsumer/EEGStream$2.class
-eegconsumer/EEGStream$1.class
+serializationSchemas/EEGSerializer.class

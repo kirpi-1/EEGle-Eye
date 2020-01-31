@@ -15,16 +15,16 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 	public static float[] BytesToFloats(byte[] buff,int offset){
 		ByteBuffer wrapped = ByteBuffer.wrap(buff,offset,buff.length-offset);
 		wrapped.order(ByteOrder.LITTLE_ENDIAN);
-		float[] res = new int[(buff.length-offset)/4];
+		float[] res = new float[(buff.length-offset)/4];
 		for(int i=0;i<res.length;i++){
-			int x = wrapped.getFloat();
+			float x = wrapped.getFloat();
 			res[i] = x;
 		}
 		return res;
 	}
 
-	public static int[] BytesToFloats(byte[] buff){
-		return BytesToInts(buff, 0);
+	public static float[] BytesToFloats(byte[] buff){
+		return BytesToFloats(buff, 0);
 	}
 	
 	public static String BytesToHeader(byte[] buff){
@@ -36,7 +36,7 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		return new String(c);		
 	}
 
-	public int[] deserialize(byte[] msg) throws IOException {
+	public Tuple3<Integer, String, float[]> deserialize(byte[] msg) throws IOException {
 		return new Tuple3(0, BytesToHeader(msg), BytesToFloats(msg,HEADER_SIZE));
 
 	}

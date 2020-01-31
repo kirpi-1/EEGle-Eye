@@ -13,12 +13,14 @@ import org.apache.log4j.Logger;
 public class EEGProcessAllWindowFunction
 	extends ProcessAllWindowFunction<Tuple3<Integer,String,float[]>, Tuple2<String, float[]>, TimeWindow> {
 	
-	final static Logger log = Logger.getLogger(MyProcessAllWindowFunction.class.getName());
+	final static Logger log = Logger.getLogger(EEGProcessAllWindowFunction.class.getName());
+	
 	@Override
-	public void process(Context context, Iterable<Tuple3<Integer,String,float[]>> frames, Collector<String> out) {
-		long numMsgs = counts.spliterator().getExactSizeIfKnown();		
+	public void process(Context context, Iterable<Tuple3<Integer,String,float[]>> frames, 
+						Collector<Tuple2<String, float[]>> out) {
+		long numMsgs = frames.spliterator().getExactSizeIfKnown();		
 		log.info(String.format("Received %d messages!", numMsgs));
-		float[] data= new int[0];
+		float[] data= new float[0];
 		int lastIdx = 0; //remembers the last index that was processed
 		int frameLen = 0; //length of each frame (should be 250 during testing)
 		int idx = 0;	//just for doing business on first frame
@@ -41,7 +43,7 @@ public class EEGProcessAllWindowFunction
 			int prevLength = data.length;
 			//make a new copy of the data array that will allow pasting
 			//in this frame's data
-			data = Arrays.copyOf(data, data.length+framdData.length);
+			data = Arrays.copyOf(data, data.length+frameData.length);
 			System.arraycopy(frameData, 0, data,prevLength,frameData.length);
 			idx++;
 		}
@@ -60,8 +62,8 @@ public class EEGProcessAllWindowFunction
 		}
 		startIdx -= frameLen;
 
-		for(Tuple2<Integer, String, int[]> frame: frames){
-			j.f0 = startIdx;
+		for(Tuple3<Integer, String, float[]> frame: frames){
+			frame.f0 = startIdx;
 		}
 	}
 }

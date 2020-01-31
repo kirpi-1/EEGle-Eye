@@ -22,15 +22,15 @@ import org.apache.flink.streaming.util.serialization.AbstractDeserializationSche
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
 import deserializationSchemas.EEGDeserializationSchema;
+import serializationSchemas.EEGSerializer;
 import eegProcess.EEGProcessAllWindowFunction;
 
 public class EEGStream{
 
 	public static void main(String[] args) throws Exception {
-		StreamExecutionEnvironment env = LocalStreamEnvironment.createLocalEnvironment();
-//StreamExecutionEnvironment.getExecutionEnvironment();
+		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// required for exactly-once or at-least-once guarantees
-		env.enableCheckpointing();
+		//env.enableCheckpointing();
 
 		RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
 			.setHost("10.0.0.12")
@@ -41,7 +41,7 @@ public class EEGStream{
 			.build();
 
 		DataStream<Tuple3<Integer, String, float[]>> stream = env.addSource(
-			new RMQSource<Tuple3<Integer, String, int[]>>(
+			new RMQSource<Tuple3<Integer, String, float[]>>(
 				connectionConfig,
 				"eeg",	//name of rabbitmq queue
 				true,		//use correlation ids; can be false if only at-least-once is required
@@ -60,8 +60,8 @@ public class EEGStream{
 			.setVirtualHost("/")
 			.build();
 			
-		tmpout.addSink(new RMQSing<Tuple2<String, float[]>>(
-			sinkConfig, "eeg", new EEGSerializationSchema()));
+		tmpout.addSink(new RMQSink<Tuple2<String, float[]>>(
+			sinkConfig, "eeg", new EEGSerializer()));
 		env.execute();
 
 	}
