@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys, signal
 import visdom
+import struct
 
 vis = visdom.Visdom();
 startTime=0;
@@ -14,16 +15,27 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def unpackNameAndData(data):
-	fmt = "8s" + str(len(data)-8) + "f"
+	fmt = "8s" + str(250-8) + "f"
 	o = struct.unpack(fmt,data)
 	return o
 
 def nparray_callback(ch, method, props, body):
-	global startTime;
-	o = unpackNameAndData(body);
-	samples = o(1)	
-	t = np.arange(startTime,startTime+len(samples))/len(samples)
-	vis.line(X=t, Y=samples,update='append')
+	global startTime;	
+	out = list();
+	startIdx = 0;
+	chunkLen = 250*4+8;
+	stride = 250*4+8;
+	print("Total byte size = ", len(body))
+	while startIdx + stride < len(body):
+		d = body[startIdx:startIdx+chunkLen]
+		print("Size = ", len(d))
+		out = unpackNameAndData(d)
+		samples = out(1)
+		t = np.arange(startTime,startTime+len(samples))/len(samples)
+		vis.line(Y=samples,update='append')
+	#o = unpackNameAndData(body);
+	#samples = o(1)	
+	
 	
 
 
