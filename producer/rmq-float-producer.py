@@ -49,6 +49,6 @@ while(True):
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
 						properties=props,
-						body=packNameAndData("user1",d))
+						body=packNameAndData("user1",signal))
 	startTime = startTime+1
 	time.sleep(1)
