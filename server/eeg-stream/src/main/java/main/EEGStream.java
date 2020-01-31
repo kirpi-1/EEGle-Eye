@@ -1,8 +1,8 @@
 package eegconsumer;
 
+import java.io.IOException;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import java.io.IOException;
 
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -12,8 +12,10 @@ import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFuncti
 
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSink;
+import org.apache.flink.streaming.connectors.rabbitmq.RMQSinkPublishOptions;
 import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
 import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig.Builder;
+
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
@@ -24,6 +26,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import deserializationSchemas.EEGDeserializationSchema;
 import serializationSchemas.EEGSerializer;
 import eegProcess.EEGProcessAllWindowFunction;
+//import publishOptions.MyRMQSinkPublishOptions;
 
 public class EEGStream{
 
@@ -59,9 +62,13 @@ public class EEGStream{
 			.setPassword("producer")
 			.setVirtualHost("/")
 			.build();
-			
+		/*
 		tmpout.addSink(new RMQSink<Tuple2<String, float[]>>(
-			sinkConfig, "eeg", new EEGSerializer()));
+			sinkConfig, 
+			new EEGSerializer(),
+			new MyRMQSinkPublishOptions())
+		);
+		*/
 		env.execute();
 
 	}

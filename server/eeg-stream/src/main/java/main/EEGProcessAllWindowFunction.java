@@ -47,13 +47,17 @@ public class EEGProcessAllWindowFunction
 			System.arraycopy(frameData, 0, data,prevLength,frameData.length);
 			idx++;
 		}
+		if(numMsgs==1)
+			frameLen=0;
+		
+		log.info(String.format("  [x] %d numbers",data.length));
 		// create a sliding window along the data and push that to stream out
-
 		int startIdx=lastIdx;
 		int chunkLength = 250;
 		int stride = 50;
 		int chunkNum=0;
-		while(startIdx < data.length-chunkLength){
+		while(startIdx + chunkLength < data.length){
+			log.info(String.format("    [x] Indices: %d to %d",startIdx, startIdx+chunkLength));
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength);
 			out.collect(new Tuple2(header,tmp));
 			log.info(String.format("        [o] pushing chunk %d",chunkNum));

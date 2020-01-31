@@ -2,3 +2,4 @@
 /home/ubuntu/code/server/eeg-stream/src/main/java/main/EEGSerializer.java
 /home/ubuntu/code/server/eeg-stream/src/main/java/main/EEGDeserializationSchema.java
 /home/ubuntu/code/server/eeg-stream/src/main/java/main/EEGProcessAllWindowFunction.java
+/home/ubuntu/code/server/eeg-stream/src/main/java/main/MyRMQSinkPublishOptions.java
