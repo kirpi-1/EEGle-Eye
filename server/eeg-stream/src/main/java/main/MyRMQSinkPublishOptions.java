@@ -17,7 +17,7 @@ public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<Str
 	}
 	@Override
 	public String computeRoutingKey(Tuple2<String, float[]> frame){
-		return "eeg";
+		return "processing";
 	}
 	
 }

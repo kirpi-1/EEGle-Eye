@@ -26,7 +26,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import deserializationSchemas.EEGDeserializationSchema;
 import serializationSchemas.EEGSerializer;
 import eegProcess.EEGProcessAllWindowFunction;
-//import publishOptions.MyRMQSinkPublishOptions;
+import publishOptions.MyRMQSinkPublishOptions;
 
 public class EEGStream{
 
@@ -62,13 +62,13 @@ public class EEGStream{
 			.setPassword("producer")
 			.setVirtualHost("/")
 			.build();
-		/*
+		
 		tmpout.addSink(new RMQSink<Tuple2<String, float[]>>(
 			sinkConfig, 
 			new EEGSerializer(),
 			new MyRMQSinkPublishOptions())
 		);
-		*/
+		
 		env.execute();
 
 	}
