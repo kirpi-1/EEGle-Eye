@@ -37,7 +37,7 @@ public class ArrayStream{
 			.setVirtualHost("/")
 			.build();
 		//use Tuple2<String, int[]> next
-		DataStream<int[]> stream = env.addSource(
+		DataStream<Tuple2<int,int[]>> stream = env.addSource(
 			new RMQSource<int[]>(
 				connectionConfig,
 				"array",

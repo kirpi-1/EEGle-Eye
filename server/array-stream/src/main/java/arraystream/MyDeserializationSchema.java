@@ -5,8 +5,9 @@ import java.nio.ByteOrder;
 import java.io.IOException;
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
+import org.apache.flink.api.java.tuple.Tuple2;
 
-public class MyDeserializationSchema extends AbstractDeserializationSchema<int[]> {
+public class MyDeserializationSchema extends AbstractDeserializationSchema<Tuple2<int, int[]>> {
 	
 	public static final int HEADER_SIZE = 8;
 
@@ -33,7 +34,8 @@ public class MyDeserializationSchema extends AbstractDeserializationSchema<int[]
     }
 
 	public int[] deserialize(byte[] msg) throws IOException {
-		return BytesToInts(msg);
+		int[] data = BytesToInts(msg);
+		return new Tuple2<int, int[]>(0,data);
 
 	}
 
