@@ -5,7 +5,7 @@ import sys, signal
 import visdom
 
 vis = visdom.Visdom();
-global startTime=0;
+startTime=0;
 
 def signal_handler(signal, frame):
     print("\nprogram exiting gracefully")
@@ -14,7 +14,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def unpackNameAndData(data):
-	fmt = "8s" + str(data.size-8) + "f"
+	fmt = "8s" + str(len(data)-8) + "f"
 	o = struct.unpack(fmt,data)
 	return o
 
@@ -29,7 +29,7 @@ def nparray_callback(ch, method, props, body):
 
 rmquser = os.environ['RABBITMQ_USERNAME']
 rmqpass = os.environ['RABBITMQ_PASSWORD']
-queue = "stringout"
+queue = "eeg"
 credentials = pika.PlainCredentials(rmquser,rmqpass)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
