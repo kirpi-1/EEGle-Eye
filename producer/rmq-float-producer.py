@@ -4,6 +4,7 @@ import time
 import sys, signal
 import numpy as np
 import uuid
+import struct
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -47,6 +48,6 @@ while(True):
 	print("    [x] Sending ints from {} to {}".format(d[0],d[-1]))
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
-						properties=props, 
+						properties=props,
 						body=packNameAndData("user1",d))
 	time.sleep(1)
