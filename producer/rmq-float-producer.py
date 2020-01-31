@@ -50,4 +50,5 @@ while(True):
 						routing_key=routing_key,
 						properties=props,
 						body=packNameAndData("user1",d))
+	startTime = startTime+1
 	time.sleep(1)
