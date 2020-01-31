@@ -40,7 +40,7 @@ startTime = 0;
 freqs = [4,11,22,35];
 print("Sending messages. CTRL+C to quit.")
 while(True):
-	t = np.arange(startTime,startTime+250,dtype=np.float32)/250.0
+	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
 	signal = np.zeros(t.size)
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)
