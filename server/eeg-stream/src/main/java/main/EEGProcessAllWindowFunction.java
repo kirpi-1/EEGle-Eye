@@ -46,6 +46,7 @@ public class EEGProcessAllWindowFunction
 			data = Arrays.copyOf(data, data.length+frameData.length);
 			System.arraycopy(frameData, 0, data,prevLength,frameData.length);
 			idx++;
+			//System.out.println(String.format("Processing: %s",header));
 		}
 		if(numMsgs==1)
 			frameLen=0;
@@ -60,7 +61,7 @@ public class EEGProcessAllWindowFunction
 			log.info(String.format("    [x] Indices: %d to %d",startIdx, startIdx+chunkLength));
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength);
 			out.collect(new Tuple2(header,tmp));
-			log.info(String.format("        [o] pushing chunk %d",chunkNum));
+			//log.info(String.format("        [o] pushing chunk %d",chunkNum));
 			startIdx = startIdx + stride;
 			chunkNum++;
 		}

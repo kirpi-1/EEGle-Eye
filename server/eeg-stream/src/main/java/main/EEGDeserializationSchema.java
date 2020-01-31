@@ -2,6 +2,10 @@ package deserializationSchemas;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+
+import java.util.Arrays;
+
 import java.io.IOException;
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
@@ -30,10 +34,17 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 	public static String BytesToHeader(byte[] buff){
 		ByteBuffer wrapped = ByteBuffer.wrap(buff);
 		wrapped.order(ByteOrder.LITTLE_ENDIAN);
+		byte[] header = Arrays.copyOf(buff, HEADER_SIZE);
+		/*
 		char[] c = new char[HEADER_SIZE];
-		for(int i=0;i<HEADER_SIZE;i++)
+		for(int i=0;i<HEADER_SIZE;i++){
 			c[i] = wrapped.getChar();
-		return new String(c);		
+			System.out.print(String.format("%d ",buff[i]));
+		}
+		*/
+		String h = new String(header, StandardCharsets.US_ASCII);
+		//System.out.println(h);
+		return h;		
 	}
 
 	public Tuple3<Integer, String, float[]> deserialize(byte[] msg) throws IOException {

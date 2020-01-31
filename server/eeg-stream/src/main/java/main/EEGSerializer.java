@@ -24,6 +24,8 @@ public class EEGSerializer implements SerializationSchema<Tuple2<String, float[]
 		byte[] header = frame.f0.getBytes();
 		byte[] body = FloatsToBytes(frame.f1);
 		byte[] result = new byte[header.length+body.length];
+		//System.out.println(String.format("Header size: %d \tBody size: %d", header.length, body.length));
+		//System.out.println(frame.f0);
 		System.arraycopy(header,0,result,0,header.length);
 		System.arraycopy(body,0,result,0,body.length);
 		return result;
