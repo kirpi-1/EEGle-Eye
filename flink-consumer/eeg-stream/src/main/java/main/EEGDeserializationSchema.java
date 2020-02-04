@@ -12,7 +12,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
-import com.google.code.gson.*;
+import com.google.code.gson.Gson;
 
 
 
