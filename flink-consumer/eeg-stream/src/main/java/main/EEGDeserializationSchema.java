@@ -38,7 +38,7 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		return header;
 	}
 
-	public Tuple3<Integer, String, float[]> deserialize(byte[] msg) throws IOException {
+	public Tuple3<Integer, EEGHeader, float[]> deserialize(byte[] msg) throws IOException {
 		// first 4 bytes is the size of the header
 		// so we must read it in order to correctly parse the header and actual data
 		ByteBuffer buff = ByteBuffer.wrap(msg);

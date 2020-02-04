@@ -26,7 +26,7 @@ public class EEGProcessAllWindowFunction
 		int lastIdx = 0; //remembers the last index that was processed
 		int frameLen = 0; //length of each frame (should be 250 during testing)
 		int idx = 0;	//just for doing business on first frame
-		EEGHeader header;
+		EEGHeader header = new EEGHeader();
 		// get the actual float data from each frame
 		// and combine it into one long array that can be subsectioned
 		for(Tuple3<Integer,EEGHeader,float[]> frame: frames){
