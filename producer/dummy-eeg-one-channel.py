@@ -25,8 +25,7 @@ credentials = pika.PlainCredentials("producer","producer")
 routing_key="eeg"
 corr_id = str(uuid.uuid4())
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(\
-				'54.201.180.173',credentials=credentials))
+connection = pika.BlockingConnection(pika.ConnectionParameters('54.201.180.173',credentials=credentials))
 channel = connection.channel()
 
 args = dict()
@@ -51,7 +50,7 @@ while(True):
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
 	signal = signal / len(freqs); #normalize
 	
-	#print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
+	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
 	#local plotting of signal
 	plotTime[0:750] = plotTime[250:];
 	plotTime[750:] = t;
