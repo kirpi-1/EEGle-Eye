@@ -29,7 +29,7 @@ public class EEGProcessAllWindowFunction
 		EEGHeader header;
 		// get the actual float data from each frame
 		// and combine it into one long array that can be subsectioned
-		for(Tuple3<Integer,String,float[]> frame: frames){
+		for(Tuple3<Integer,EEGHeader,float[]> frame: frames){
 			
 			//grab data (for convenience)
 			float[] frameData = frame.f2;
