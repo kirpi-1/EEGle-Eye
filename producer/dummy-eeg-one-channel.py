@@ -7,6 +7,7 @@ import uuid
 import struct
 import visdom
 import json
+from DataPackager import makeHeader,packHeaderAndData
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
