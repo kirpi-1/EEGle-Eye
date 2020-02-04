@@ -16,7 +16,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 
-vis = visdom.Visdom()
+#vis = visdom.Visdom()
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
@@ -56,7 +56,7 @@ while(True):
 	plotTime[750:] = t;
 	plotSignal[0:750] = plotSignal[250:];
 	plotSignal[750:] = signal;
-	vis.line(X=plotTime,Y=plotSignal,win=win)
+	#vis.line(X=plotTime,Y=plotSignal,win=win)
 	data = np.vstack([t,signal]).transpose()
 	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250)
 	frame = packHeaderAndData(header,np.hstack(time,data))
