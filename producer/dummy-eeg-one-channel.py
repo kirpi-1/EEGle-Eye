@@ -25,7 +25,7 @@ credentials = pika.PlainCredentials("producer","producer")
 routing_key="eeg"
 corr_id = str(uuid.uuid4())
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('54.201.180.173',credentials=credentials))
+connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 channel = connection.channel()
 
 args = dict()
