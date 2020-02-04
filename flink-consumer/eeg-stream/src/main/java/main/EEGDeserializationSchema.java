@@ -12,7 +12,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
-import com.google.code.gson._;
+import com.google.code.gson.*;
 
 // class for unpacking the JSON
 class EEGHeader {
@@ -53,7 +53,7 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
 		int headerSize = buff.getInt();
 		EEGHeader header = BytesToHeader(buff, headerSize);
-		return new Tuple3(0, BytesToHeader(msg, headerSize), BytesToFloats(msg,HEADER_SIZE));
+		return new Tuple3(0, BytesToHeader(msg, headerSize), BytesToFloats(msg,headerSize));
 
 	}
 
