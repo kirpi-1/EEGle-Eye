@@ -52,7 +52,7 @@ while(True):
 	cycleTime = t % fullCycle - fullCycle/2
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
 	signal = signal / len(freqs); #normalize
-	
+	signal = np.arange(0,250,dtype=np.float)
 	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
 	#local plotting of signal
 	plotTime[0:750] = plotTime[250:];
