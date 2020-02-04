@@ -1,6 +1,8 @@
 package serializationSchemas;
 
 import org.apache.flink.api.common.serialization.SerializationSchema;
+
+import java.nio.charset.StandardCharsets;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.io.IOException;
