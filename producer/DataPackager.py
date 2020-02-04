@@ -9,6 +9,7 @@ def packHeaderAndData(header, data):
 	j = json.dumps(header)
 	j = j.replace("{","[")
 	j = j.replace("}","]")
+	print(j)
 	headerSize = len(j)
 	fmt = "<i"+str(headerSize) + "s" + str(header['num_channels']*header['num_samples']) + "f"
 	o = struct.pack(fmt,headerSize,j.encode('utf-8'),*data.flatten())
