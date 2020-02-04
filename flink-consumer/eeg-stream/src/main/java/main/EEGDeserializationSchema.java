@@ -17,18 +17,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import eegstreamerutils.EEGHeader;
+
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, String, float[]>> {
-// class for unpacking the JSON
-	static class EEGHeader {
-		int frame_number;
-		String user_name;
-		String ML_model;
-		int sampling_rate;
-		int num_samples;
-		int num_channels;
-		List<String> channel_names;
-		EEGHeader(){};
-	}
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
 		buff.position(offset);
