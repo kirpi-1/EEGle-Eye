@@ -50,7 +50,7 @@ public class EEGStream{
 				true,		//use correlation ids; can be false if only at-least-once is required
 				new EEGDeserializationSchema())
 			).setParallelism(1); //non-parallel source is only required for exactly-once
-
+/*
 		DataStream<Tuple2<String, float[]>> tmpout = stream
 			.timeWindowAll(Time.seconds(2), Time.seconds(1))
 			.process(new EEGProcessAllWindowFunction());
@@ -68,7 +68,7 @@ public class EEGStream{
 			new EEGSerializer(),
 			new MyRMQSinkPublishOptions())
 		);
-		
+	*/	
 		env.execute();
 
 	}

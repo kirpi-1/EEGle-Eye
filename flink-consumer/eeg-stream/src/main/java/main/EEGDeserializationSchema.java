@@ -12,43 +12,48 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
-public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, String, float[]>> {
-	
-	public static final int HEADER_SIZE = 8;
+import com.google.code.gson;
 
-	public static float[] BytesToFloats(byte[] buff,int offset){
-		ByteBuffer wrapped = ByteBuffer.wrap(buff,offset,buff.length-offset);
-		wrapped.order(ByteOrder.LITTLE_ENDIAN);
-		float[] res = new float[(buff.length-offset)/4];
+// class for unpacking the JSON
+class EEGHeader {
+	int frameNumber;
+	String username;
+	String mlModel;
+	int samplingRate;
+	int numChannels;
+	int numSamples;
+	String[] channelNames;
+	EEGHeader(){};
+}
+
+public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, String, float[]>> {
+
+	public static float[] BytesToFloats(ByteBuffer buff,int offset){
+		buff.position(offset);
+		float[] res = new float[(buff.array().length-offset)/4];
 		for(int i=0;i<res.length;i++){
-			float x = wrapped.getFloat();
+			float x = buff.getFloat();
 			res[i] = x;
 		}
 		return res;
 	}
 
-	public static float[] BytesToFloats(byte[] buff){
-		return BytesToFloats(buff, 0);
-	}
-	
-	public static String BytesToHeader(byte[] buff){
-		ByteBuffer wrapped = ByteBuffer.wrap(buff);
-		wrapped.order(ByteOrder.LITTLE_ENDIAN);
-		byte[] header = Arrays.copyOf(buff, HEADER_SIZE);
-		/*
-		char[] c = new char[HEADER_SIZE];
-		for(int i=0;i<HEADER_SIZE;i++){
-			c[i] = wrapped.getChar();
-			System.out.print(String.format("%d ",buff[i]));
-		}
-		*/
-		String h = new String(header, StandardCharsets.US_ASCII);
-		//System.out.println(h);
-		return h;		
+	public static EEGHeader BytesToHeader(ByteBuffer buff, int headerSize){
+		byte[] b = Arrays.copyOf(buff.array(), headerSize);
+		String headerJSON = new String(b, StandardCharsets.US_ASCII);
+		Gson gson = new Gson();
+		EEGHeader header = gson.fromJson(headerJSON, EEGHeader.class);
+		return header;
 	}
 
 	public Tuple3<Integer, String, float[]> deserialize(byte[] msg) throws IOException {
-		return new Tuple3(0, BytesToHeader(msg), BytesToFloats(msg,HEADER_SIZE));
+		// first 4 bytes is the size of the header
+		// so we must read it in order to correctly parse the header and actual data
+		ByteBuffer buff = ByteBuffer.wrap(msg);
+		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
+		int headerSize = buff.getInt();
+		EEGHeader header = BytesToHeader(buff, headerSize);
+		return new Tuple3(0, BytesToHeader(msg, headerSize), BytesToFloats(msg,HEADER_SIZE));
 
 	}
 
