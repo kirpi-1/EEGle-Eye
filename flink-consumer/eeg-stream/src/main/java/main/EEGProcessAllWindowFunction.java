@@ -10,6 +10,8 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.log4j.Logger;
 
+import eegstreamerutils.EEGHeader;
+
 public class EEGProcessAllWindowFunction
 	extends ProcessAllWindowFunction<Tuple3<Integer,String,float[]>, Tuple2<String, float[]>, TimeWindow> {
 	

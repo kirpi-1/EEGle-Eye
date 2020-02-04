@@ -28,6 +28,8 @@ import serializationSchemas.EEGSerializer;
 import eegProcess.EEGProcessAllWindowFunction;
 import publishOptions.MyRMQSinkPublishOptions;
 
+import eegstreamerutils.EEGHeader;
+
 public class EEGStream{
 
 	public static void main(String[] args) throws Exception {
@@ -43,15 +45,15 @@ public class EEGStream{
 			.setVirtualHost("/")
 			.build();
 
-		DataStream<Tuple3<Integer, String, float[]>> stream = env.addSource(
-			new RMQSource<Tuple3<Integer, String, float[]>>(
+		DataStream<Tuple3<Integer, EEGHeader, float[]>> stream = env.addSource(
+			new RMQSource<Tuple3<Integer, EEGHeader, float[]>>(
 				connectionConfig,
 				"eeg",	//name of rabbitmq queue
 				true,		//use correlation ids; can be false if only at-least-once is required
 				new EEGDeserializationSchema())
 			).setParallelism(1); //non-parallel source is only required for exactly-once
-/*
-		DataStream<Tuple2<String, float[]>> tmpout = stream
+
+		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.timeWindowAll(Time.seconds(2), Time.seconds(1))
 			.process(new EEGProcessAllWindowFunction());
 
@@ -63,13 +65,13 @@ public class EEGStream{
 			.setVirtualHost("/")
 			.build();
 		
-		tmpout.addSink(new RMQSink<Tuple2<String, float[]>>(
+		tmpout.addSink(new RMQSink<Tuple2<EEGHeader, float[]>>(
 			sinkConfig, 
 			new EEGSerializer(),
 			new MyRMQSinkPublishOptions())
 		);
-	*/
-		stream.print();
+
+		//stream.print();
 		env.execute();
 
 	}
