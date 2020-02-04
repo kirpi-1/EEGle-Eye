@@ -6,6 +6,7 @@ import numpy as np
 import uuid
 import struct
 import visdom
+import json
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -17,6 +18,9 @@ def packNameAndData(name, data):
 	fmt = "8s" + str(data.size) + "f"
 	o = struct.pack(fmt,name.encode('utf-8'),*data)
 	return o
+
+def makeHeader(channelNames):
+	print("channel names")
 
 vis = visdom.Visdom()
 
