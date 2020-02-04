@@ -5,12 +5,12 @@ import java.util.List;
 // helper class for (de)serializing JSON of the header
 
 public class EEGHeader {
-	int frame_number;
-	String user_name;
-	String ML_model;
-	int sampling_rate;
-	int num_samples;
-	int num_channels;
-	List<String> channel_names;
-	EEGHeader(){};	
+	public int frame_number;
+	public String user_name;
+	public String ML_model;
+	public int sampling_rate;
+	public int num_samples;
+	public int num_channels;
+	public List<String> channel_names;
+	public EEGHeader(){};	
 }
