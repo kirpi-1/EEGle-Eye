@@ -7,16 +7,13 @@ import uuid
 import struct
 import visdom
 import json
+from DataPackager import makeHeader,packHeaderAndData
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
 	sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
-
-
-
-vis = visdom.Visdom()
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
@@ -25,8 +22,7 @@ credentials = pika.PlainCredentials("producer","producer")
 routing_key="eeg"
 corr_id = str(uuid.uuid4())
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(\
-				'54.201.180.173',credentials=credentials))
+connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 channel = connection.channel()
 
 args = dict()
@@ -40,7 +36,9 @@ fullCycle=10
 print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
 plotSignal = np.zeros((250*4))
-win = vis.line(X=plotTime, Y=plotSignal)
+
+#vis = visdom.Visdom()
+#win = vis.line(X=plotTime, Y=plotSignal)
 frameNumber = 0;
 while(True):
 	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
@@ -50,21 +48,22 @@ while(True):
 	cycleTime = t % fullCycle - fullCycle/2
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
 	signal = signal / len(freqs); #normalize
-	
-	#print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
+	signal = np.arange(0,250,dtype=np.float)
+#	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
 	#local plotting of signal
 	plotTime[0:750] = plotTime[250:];
 	plotTime[750:] = t;
 	plotSignal[0:750] = plotSignal[250:];
 	plotSignal[750:] = signal;
-	vis.line(X=plotTime,Y=plotSignal,win=win)
+	#vis.line(X=plotTime,Y=plotSignal,win=win)
 	data = np.vstack([t,signal]).transpose()
-	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250)
-	frame = packHeaderAndData(header,np.hstack(time,data))
+	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250,numChannels=2)
+	print(header)
+	frame = packHeaderAndData(header,data)
 	
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
 						properties=props,
-						body=packNameAndData("user1",signal))
+						body=frame)
 	startTime = startTime+1
 	time.sleep(1)
