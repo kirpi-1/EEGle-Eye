@@ -61,7 +61,7 @@ while(True):
 	plotSignal[750:] = signal;
 	#vis.line(X=plotTime,Y=plotSignal,win=win)
 	data = np.vstack([t,signal]).transpose()
-	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250)
+	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250,numChannels=2)
 	frame = packHeaderAndData(header,np.hstack(time,data))
 	
 	channel.basic_publish(exchange='',
