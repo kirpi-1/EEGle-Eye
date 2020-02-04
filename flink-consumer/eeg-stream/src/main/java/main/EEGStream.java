@@ -68,7 +68,8 @@ public class EEGStream{
 			new EEGSerializer(),
 			new MyRMQSinkPublishOptions())
 		);
-	*/	
+	*/
+		stream.print();
 		env.execute();
 
 	}

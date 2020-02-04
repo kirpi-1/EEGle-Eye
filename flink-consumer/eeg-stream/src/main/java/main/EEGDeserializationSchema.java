@@ -5,6 +5,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Arrays;
+import java.util.List;
 
 import java.io.IOException;
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
@@ -12,23 +13,22 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
-//import com.google.code.gson.Gson;
-
-
-
-// class for unpacking the JSON
-class EEGHeader {
-	int frameNumber;
-	String username;
-	String mlModel;
-	int samplingRate;
-	int numChannels;
-	int numSamples;
-	String[] channelNames;
-	EEGHeader(){};
-}
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, String, float[]>> {
+// class for unpacking the JSON
+	static class EEGHeader {
+		int frame_number;
+		String user_name;
+		String ML_model;
+		int sampling_rate;
+		int num_samples;
+		int num_channels;
+		List<String> channel_names;
+		EEGHeader(){};
+	}
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
 		buff.position(offset);
@@ -41,7 +41,8 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 	}
 
 	public static String BytesToHeader(ByteBuffer buff, int headerSize){
-		byte[] b = Arrays.copyOf(buff.array(), headerSize);
+		// copy from 4 to headerSize+4 beacuse first 4 bytes are the int that represents headersize
+		byte[] b = Arrays.copyOfRange(buff.array(), 4, 4+headerSize);
 		String header = new String(b, StandardCharsets.US_ASCII);		
 		return header;
 	}
@@ -53,8 +54,34 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
 		int headerSize = buff.getInt();
 		String header = BytesToHeader(buff, headerSize);
+		System.out.println("=====================================");
 		System.out.println(header);
-		return new Tuple3(0, header, BytesToFloats(buff,headerSize));
+		Gson gson = new Gson();
+		EEGHeader eegh = gson.fromJson(header, EEGHeader.class);
+		System.out.println(String.format("frame number: %d", eegh.frame_number));
+		System.out.println(String.format("user name   : %s", eegh.user_name));
+		System.out.println(String.format("ML Model    : %s", eegh.ML_model));
+		System.out.println(String.format("samplingrate: %d", eegh.sampling_rate));
+		System.out.println(String.format("num channels: %d", eegh.num_channels));
+		System.out.println(String.format("num samples : %d", eegh.num_samples));
+		System.out.println(String.format("    %s",eegh.channel_names));
+
+
+//		JsonParser parser = new JsonParser();
+//		JsonArray array = parser.parse(header).getAsJsonArray();
+//		System.out.print("0:\t");
+//		String message = gson.fromJson(array.get(0),String.class);
+//		System.out.println(message);
+//		message = gson.fromJson(array.get(1),String.class);
+//		System.out.print("1:\t");
+//		System.out.println(message);
+//		EEGHeader eegh = gson.fromJson(header, EEGHeader.class);
+
+		System.out.println("=====================================");
+
+
+
+		return new Tuple3(0, header, BytesToFloats(buff,headerSize+4));
 
 	}
 
