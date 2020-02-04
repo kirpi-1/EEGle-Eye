@@ -15,10 +15,6 @@ def signal_handler(signal, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-
-
-
-
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
 credentials = pika.PlainCredentials("producer","producer")
@@ -53,7 +49,7 @@ while(True):
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
 	signal = signal / len(freqs); #normalize
 	signal = np.arange(0,250,dtype=np.float)
-	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
+#	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
 	#local plotting of signal
 	plotTime[0:750] = plotTime[250:];
 	plotTime[750:] = t;
@@ -62,6 +58,7 @@ while(True):
 	#vis.line(X=plotTime,Y=plotSignal,win=win)
 	data = np.vstack([t,signal]).transpose()
 	header = makeHeader(frameNumber, ['time','Fpz'], 'onechannel',numSamples=250,numChannels=2)
+	print(header)
 	frame = packHeaderAndData(header,data)
 	
 	channel.basic_publish(exchange='',
