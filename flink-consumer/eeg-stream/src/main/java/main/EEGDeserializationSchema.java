@@ -53,6 +53,7 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
 		int headerSize = buff.getInt();
 		String header = BytesToHeader(buff, headerSize);
+		System.out.println(header);
 		return new Tuple3(0, header, BytesToFloats(buff,headerSize));
 
 	}
