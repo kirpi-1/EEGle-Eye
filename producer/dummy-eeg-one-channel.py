@@ -16,7 +16,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 
-#vis = visdom.Visdom()
+
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
@@ -39,7 +39,9 @@ fullCycle=10
 print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
 plotSignal = np.zeros((250*4))
-win = vis.line(X=plotTime, Y=plotSignal)
+
+#vis = visdom.Visdom()
+#win = vis.line(X=plotTime, Y=plotSignal)
 frameNumber = 0;
 while(True):
 	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
