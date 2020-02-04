@@ -40,11 +40,9 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		return res;
 	}
 
-	public static EEGHeader BytesToHeader(ByteBuffer buff, int headerSize){
+	public static String BytesToHeader(ByteBuffer buff, int headerSize){
 		byte[] b = Arrays.copyOf(buff.array(), headerSize);
-		String headerJSON = new String(b, StandardCharsets.US_ASCII);
-		Gson gson = new Gson();
-		EEGHeader header = gson.fromJson(headerJSON, EEGHeader.class);
+		String header = new String(b, StandardCharsets.US_ASCII);		
 		return header;
 	}
 
@@ -54,8 +52,8 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		ByteBuffer buff = ByteBuffer.wrap(msg);
 		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
 		int headerSize = buff.getInt();
-		EEGHeader header = BytesToHeader(buff, headerSize);
-		return new Tuple3(0, BytesToHeader(msg, headerSize), BytesToFloats(msg,headerSize));
+		String header = BytesToHeader(buff, headerSize);
+		return new Tuple3(0, header, BytesToFloats(msg,headerSize));
 
 	}
 
