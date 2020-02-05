@@ -53,7 +53,7 @@ def nparray_callback(ch, method, props, body):
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
 	d = body
 	header, data = unpackHeaderAndData(d)
-	print("got header number", header["frame_number"]
+	print("got header number", header["frame_number"])
 	#get channel number for time/TIME
 	timeIdx = 0;
 	for i,n in header['channel_names']:
