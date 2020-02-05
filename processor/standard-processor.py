@@ -56,7 +56,7 @@ def nparray_callback(ch, method, props, body):
 			timeIdx=i;
 			break;
 	# get time data
-	time = data[:,timeIdx]
+	time = np.expand_dims(data[:,timeIdx],axis=1)
 	mask = np.ones(header['num_channels'],dtype=bool)
 	mask[timeIdx]=False
 	# extract just eeg data
