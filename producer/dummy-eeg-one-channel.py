@@ -7,6 +7,7 @@ import uuid
 import struct
 import visdom
 import json
+sys.path.insert(1,'../utils')
 from DataPackager import makeHeader,packHeaderAndData
 
 def signal_handler(signal, frame):
