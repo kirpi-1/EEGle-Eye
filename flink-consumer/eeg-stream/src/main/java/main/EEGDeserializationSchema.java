@@ -12,7 +12,8 @@ import org.apache.flink.streaming.util.serialization.AbstractDeserializationSche
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,7 +23,7 @@ import eegstreamerutils.EEGHeader;
 
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, EEGHeader, float[]>> {
 
-	final static Logger log = Logger.getLogger(EEGDeserializationSchema.class.getName());
+	final static Logger log = LogManager.getLogger(EEGDeserializationSchema.class.getName());
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
 		float[] res = new float[(buff.array().length-offset)/4];
