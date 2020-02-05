@@ -24,6 +24,8 @@ def unpackHeaderAndData(message):
 	# read starting from byte 4 since bytes 0-3 are header size int
 	h = struct.unpack(fmt, message[4:headerSize+4])
 	header = json.loads(h[0])
+	print("num_channels:",header['num_channels'])
+	print("num_samples:",header['num_samples'])
 	# use header to determine size of actual data
 	totalSamples = header['num_channels']*header['num_samples']
 	fmt = "<" + str(totalSamples) + "f"
