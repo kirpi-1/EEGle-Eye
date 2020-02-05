@@ -35,6 +35,7 @@ public class EEGSerializer implements SerializationSchema<Tuple2<EEGHeader, floa
 		String header = gson.toJson(frame.f0);
 		byte[] headerAsBytes = header.getBytes(StandardCharsets.UTF_8);
 		ByteBuffer tmp = ByteBuffer.allocate(4);
+		tmp.order(ByteOrder.LITTLE_ENDIAN);
 		tmp.putInt(headerAsBytes.length);
 		byte[] headerSize = tmp.array();
 		byte[] body = FloatsToBytes(frame.f1);
