@@ -8,14 +8,15 @@ import org.apache.flink.util.Collector;
 import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction.Context;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import eegstreamerutils.EEGHeader;
 
 public class EEGProcessAllWindowFunction
 	extends ProcessAllWindowFunction<Tuple3<Integer,EEGHeader,float[]>, Tuple2<EEGHeader, float[]>, TimeWindow> {
 	
-	final static Logger log = Logger.getLogger(EEGProcessAllWindowFunction.class.getName());
+	final static Logger log = LogManager.getLogger(EEGProcessAllWindowFunction.class.getName());
 	
 	@Override
 	public void process(Context context, Iterable<Tuple3<Integer,EEGHeader,float[]>> frames, 
