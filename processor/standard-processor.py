@@ -68,7 +68,7 @@ def nparray_callback(ch, method, props, body):
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
 	#o = unpackNameAndData(body);
-	data = np.hstack(time,eegfft);
+	data = np.hstack([time,eegfft]);
 	frame = packHeaderAndData(header,data)
 	
 	out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
