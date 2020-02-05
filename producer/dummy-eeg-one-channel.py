@@ -38,10 +38,7 @@ print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
 plotSignal = np.zeros((250*4))
 
-#vis = visdom.Visdom()
-#win = vis.line(X=plotTime, Y=plotSignal)
-frameNumber = 0;
-while(True):
+def makeSignal(t, freqs,cyclingFreq = 11):
 	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
 	signal = np.zeros(t.size)
 	for f in freqs:
@@ -50,20 +47,23 @@ while(True):
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
 	signal = signal / len(freqs); #normalize
 	signal = np.arange(0,250,dtype=np.float)
-#	print("    [x] Sending floats from {} to {}".format(t[0],t[-1]))
-	#local plotting of signal
-	plotTime[0:750] = plotTime[250:];
-	plotTime[750:] = t;
-	plotSignal[0:750] = plotSignal[250:];
-	plotSignal[750:] = signal;
-	#vis.line(X=plotTime,Y=plotSignal,win=win)
+	return signal
+
+#vis = visdom.Visdom()
+#win = vis.line(X=plotTime, Y=plotSignal)
+frameNumber = 0;
+while(True):
+	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
+	signal = makeSignal(t,freqs,freqs[2])
+	
 	data = np.vstack([t,signal]).transpose()
 	header = makeHeader("test",frameNumber, startTime,['time','Fpz'],\
 		 numSamples=250,numChannels=2)
-	print(header)
 	frame = packHeaderAndData(header,data)
 	headerSize = int.from_bytes(frame[0:3],byteorder='little')
 	sampleSize = 250*4*2;
+	
+	print(header)
 	print("frame length is:", len(frame))
 	print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	
