@@ -51,8 +51,9 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 def nparray_callback(ch, method, props, body):
 	out = list();
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
-	d = body
-	header, data = unpackHeaderAndData(d)
+	print("body size is:",len(body))
+	print("first frame is:",int.from_bytes(body[0:3],byteorder="little"))
+	header, data = unpackHeaderAndData(body)
 	print("got header number", header["frame_number"])
 	#get channel number for time/TIME
 	timeIdx = 0;
