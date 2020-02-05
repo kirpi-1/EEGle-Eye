@@ -74,8 +74,8 @@ def nparray_callback(ch, method, props, body):
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
 	#o = unpackNameAndData(body);
-	print("time:", time.shape)
-	print("eegfft:",eegfft.shape)
+	#print("time:", time.shape)
+	#print("eegfft:",eegfft.shape)
 	data = np.hstack([time,eegfft]);
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
