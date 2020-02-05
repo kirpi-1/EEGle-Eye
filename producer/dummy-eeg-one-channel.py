@@ -32,7 +32,7 @@ channel.queue_declare(queue=routing_key,arguments=args,durable = True)
 props = pika.BasicProperties(correlation_id=corr_id)
 
 startTime = 0;
-freqs = [4,11,22,35];
+freqs = [1,4,11,22,35,80];
 fullCycle=10
 print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
