@@ -44,7 +44,7 @@ public class EEGSerializer implements SerializationSchema<Tuple2<EEGHeader, floa
 		// src, src pos, dst, dst pos, length
 		System.arraycopy(headerSize,0,result,0,headerSize.length);
 		System.arraycopy(headerAsBytes,0,result,headerSize.length,headerAsBytes.length);
-		System.arraycopy(body,0,result,headerSize.lenght+headerAsBytes.length,body.length);
+		System.arraycopy(body,0,result,headerSize.length+headerAsBytes.length,body.length);
 		return result;
 	}
 
