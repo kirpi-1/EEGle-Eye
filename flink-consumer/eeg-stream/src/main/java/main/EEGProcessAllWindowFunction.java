@@ -63,21 +63,20 @@ public class EEGProcessAllWindowFunction
 		if(numMsgs==1)
 			frameLen=0;
 		
-//		log.info(String.format("  [x] %d numbers",data.length));
 		// create a sliding window along the data and push that to stream out
 		int startIdx=lastIdx;
 		int chunkLength = 250;
+		int numChannels = header.num_channels; // need number of channels for proper spacing
 		int stride = 50;
 		int chunkNum=0;
-		while(startIdx + chunkLength < data.length){
-			//log.info(String.format("    [x] Indices: %d to %d",startIdx, startIdx+chunkLength));
-			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength);
+		while(startIdx + chunkLength*numChannels < data.length){
+			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength*numChannels);
 			out.collect(new Tuple2(header,tmp));
-			//log.info(String.format("        [o] pushing chunk %d",chunkNum));
-			startIdx = startIdx + stride;
+			// multiply by number of channels to move proper number of values forward
+			startIdx = startIdx + stride*numChannels;
 			chunkNum++;
 		}
-		startIdx -= frameLen;
+		startIdx -= frameLen; // since the front frame will drop off, subtract it's length from startIdx
 
 		for(Tuple3<Integer, EEGHeader, float[]> frame: frames){
 			frame.f0 = startIdx;
