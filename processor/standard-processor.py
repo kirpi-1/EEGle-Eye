@@ -53,6 +53,7 @@ def nparray_callback(ch, method, props, body):
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
 	d = body
 	header, data = unpackHeaderAndData(d)
+	print("got header number", header["frame_number"]
 	#get channel number for time
 	r = [i for i in header['channel_names'] if 'time' in i or 'TIME' in i]
 	timeChannelIdx = header['channel_names'].index(r[0])

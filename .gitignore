@@ -8,6 +8,4 @@
 .gitignore
 consumer/
 ./producer/
-producer
-consumer
 flink-consumer/
