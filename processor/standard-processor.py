@@ -54,7 +54,6 @@ def nparray_callback(ch, method, props, body):
 	out = list();
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
 	header, data = unpackHeaderAndData(body)
-	print("got header number", header["frame_number"])
 	#get channel number for time/TIME
 	timeIdx = 0;
 	for i,n in enumerate(header['channel_names']):
@@ -76,7 +75,9 @@ def nparray_callback(ch, method, props, body):
 	#o = unpackNameAndData(body);
 	#print("time:", time.shape)
 	#print("eegfft:",eegfft.shape)
-	data = np.hstack([time,eegfft]);
+	print("got header number", header["frame_number"], "starting at",time[0])
+
+	data = np.hstack([time,eegfft])
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
 	out_channel.basic_publish(exchange='',
