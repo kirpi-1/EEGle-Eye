@@ -54,12 +54,18 @@ def nparray_callback(ch, method, props, body):
 	d = body
 	header, data = unpackHeaderAndData(d)
 	print("got header number", header["frame_number"]
-	#get channel number for time
-	r = [i for i in header['channel_names'] if 'time' in i or 'TIME' in i]
-	timeChannelIdx = header['channel_names'].index(r[0])
-	time = data[:,timeChannelIdx]
+	#get channel number for time/TIME
+	timeIdx = 0;
+	for i,n in header['channel_names']:
+		if n.tolower()=='time':
+			timeIdx=i;
+			break;
+	
+	# r = [i for i in header['channel_names'] if 'time' in i or 'TIME' in i]
+	# timeChannelIdx = header['channel_names'].index(r[0])
+	time = data[:,timeIdx]
 	mask = np.ones(header['num_channels'],dtype=bool)
-	mask[timeChannelIdx]=False
+	mask[timeIdx]=False
 	eeg = data[:,mask]
 	# lowpass first
 	eeg = butterworth_filter(eeg,LOWPASS_CUTOFF,header['sampling_rate'])
