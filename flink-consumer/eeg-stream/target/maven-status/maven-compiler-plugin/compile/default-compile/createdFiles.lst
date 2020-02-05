@@ -1,6 +1,6 @@
-deserializationSchemas/EEGDeserializationSchema$EEGHeader.class
 publishOptions/MyRMQSinkPublishOptions.class
 eegconsumer/EEGStream.class
 serializationSchemas/EEGSerializer.class
 eegProcess/EEGProcessAllWindowFunction.class
+eegstreamerutils/EEGHeader.class
 deserializationSchemas/EEGDeserializationSchema.class
