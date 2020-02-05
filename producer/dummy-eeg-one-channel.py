@@ -62,7 +62,9 @@ while(True):
 		 numSamples=250,numChannels=2)
 	print(header)
 	frame = packHeaderAndData(header,data)
-	
+	headerSize = int.from_bytes(frame[0:3],byteorder='little')
+	sampleSize = 250*4*2;
+	print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
 						properties=props,
