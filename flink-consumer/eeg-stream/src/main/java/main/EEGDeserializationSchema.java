@@ -26,7 +26,6 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
 		float[] res = new float[(buff.array().length-offset)/4];
-	System.out.println(String.format("----%d bytes in body",buff.array().length-offset));
 		buff.position(offset);
 		for(int i=0;i<res.length;i++){
 			float x = buff.getFloat();
@@ -51,9 +50,6 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		String header = BytesToHeader(buff, headerSize);
 		Gson gson = new Gson();
 		EEGHeader eegh = gson.fromJson(header, EEGHeader.class);
-		System.out.println(String.format("---header number: %d",eegh.frame_number));
-
-
 		return new Tuple3(0, eegh, BytesToFloats(buff,headerSize+4));
 
 	}
