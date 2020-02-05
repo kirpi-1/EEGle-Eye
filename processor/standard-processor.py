@@ -29,7 +29,7 @@ args = dict()
 args['message-ttl']=10000
 
 in_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
-in_channel = connection.channel()
+in_channel = in_connection.channel()
 in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 
 out_connection = pika.BlockingConnectin(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
