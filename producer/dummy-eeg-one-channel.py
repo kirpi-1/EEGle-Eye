@@ -73,6 +73,6 @@ while(True):
 						body=frame)
 	startTime = startTime+1
 	frameNumber = frameNumber + 1
-	#time.sleep(1)
-	x = input();
+	time.sleep(1)
+	#x = input();
 
