@@ -55,7 +55,7 @@ def nparray_callback(ch, method, props, body):
 	print("got header number", header["frame_number"])
 	#get channel number for time/TIME
 	timeIdx = 0;
-	for i,n in header['channel_names']:
+	for i,n in enumerate(header['channel_names']):
 		if n.tolower()=='time':
 			timeIdx=i;
 			break;
