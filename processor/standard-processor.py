@@ -34,7 +34,7 @@ in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 
 out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 out_channel = out_connection.channel()
-out_channel.queue_declare(queue=out_queue,arguments=ars,durable = True)
+out_channel.queue_declare(queue=out_queue,arguments=args,durable = True)
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
@@ -81,8 +81,8 @@ def nparray_callback(ch, method, props, body):
 	
 	
 
-in_channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
+in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
-channel.start_consuming()
+in_channel.start_consuming()
