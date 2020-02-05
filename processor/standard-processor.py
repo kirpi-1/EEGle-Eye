@@ -76,7 +76,7 @@ def nparray_callback(ch, method, props, body):
 	out_channel.queue_declare(queue=out_queue,arguments=args,durable = True)
 
 	out_channel.basic_publish(exchange='',
-						routing_key=,header['ML_model'],
+						routing_key=header['ML_model'],
 						body=frame)#properties=props,
 						
 	#print(samples)
