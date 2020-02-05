@@ -32,10 +32,6 @@ in_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',cr
 in_channel = in_connection.channel()
 in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 
-out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
-out_channel = out_connection.channel()
-out_channel.queue_declare(queue=out_queue,arguments=args,durable = True)
-
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
 	normal_cutoff = cutoff / nyq
@@ -59,12 +55,11 @@ def nparray_callback(ch, method, props, body):
 		if n.lower()=='time':
 			timeIdx=i;
 			break;
-	
-	# r = [i for i in header['channel_names'] if 'time' in i or 'TIME' in i]
-	# timeChannelIdx = header['channel_names'].index(r[0])
+	# get time data
 	time = data[:,timeIdx]
 	mask = np.ones(header['num_channels'],dtype=bool)
 	mask[timeIdx]=False
+	# extract just eeg data
 	eeg = data[:,mask]
 	# lowpass first
 	eeg = butterworth_filter(eeg,LOWPASS_CUTOFF,header['sampling_rate'])
@@ -72,15 +67,16 @@ def nparray_callback(ch, method, props, body):
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
-	f = np.arange(0,1,1/250)*250
-	for c in np.arange(power.shape[1]-1):
-		power[:,c] = power[:,c+1]
-	power[:,19] = p.squeeze()
 	#o = unpackNameAndData(body);
 	data = np.hstack(time,eegfft);
 	frame = packHeaderAndData(header,data)
+	
+	out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+	out_channel = out_connection.channel()
+	out_channel.queue_declare(queue=out_queue,arguments=args,durable = True)
+
 	out_channel.basic_publish(exchange='',
-						routing_key="ML",
+						routing_key=,header['ML_model'],
 						body=frame)#properties=props,
 						
 	#print(samples)
