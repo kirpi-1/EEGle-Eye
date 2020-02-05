@@ -17,8 +17,8 @@ def packHeaderAndData(header, data):
 	
 def unpackHeaderAndData(message):
 	headerSize = int.from_bytes(message[0:3],byteorder="little");
-	print("total size is:",len(message))
-	print("headerSize:",headerSize)
+	# print("total size is:",len(message))
+	# print("headerSize:",headerSize)
 	# "<" is little-endian
 	fmt = "<" + str(headerSize) + "s"
 	# read starting from byte 4 since bytes 0-3 are header size int
