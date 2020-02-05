@@ -25,7 +25,7 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 	final static Logger log = Logger.getLogger(EEGDeserializationSchema.class.getName());
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
-		float[] res = new float[(buff.array().length-offset)/4
+		float[] res = new float[(buff.array().length-offset)/4];
 	System.out.println(String.format("----%d bytes in body",buff.array().length-offset));
 		buff.position(offset);
 		for(int i=0;i<res.length;i++){
