@@ -10,24 +10,26 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.log4j.Logger;
 
+import eegstreamerutils.EEGHeader;
+
 public class EEGProcessAllWindowFunction
-	extends ProcessAllWindowFunction<Tuple3<Integer,String,float[]>, Tuple2<String, float[]>, TimeWindow> {
+	extends ProcessAllWindowFunction<Tuple3<Integer,EEGHeader,float[]>, Tuple2<EEGHeader, float[]>, TimeWindow> {
 	
 	final static Logger log = Logger.getLogger(EEGProcessAllWindowFunction.class.getName());
 	
 	@Override
-	public void process(Context context, Iterable<Tuple3<Integer,String,float[]>> frames, 
-						Collector<Tuple2<String, float[]>> out) {
+	public void process(Context context, Iterable<Tuple3<Integer,EEGHeader,float[]>> frames, 
+						Collector<Tuple2<EEGHeader, float[]>> out) {
 		long numMsgs = frames.spliterator().getExactSizeIfKnown();		
 		log.info(String.format("Received %d messages!", numMsgs));
 		float[] data= new float[0];
 		int lastIdx = 0; //remembers the last index that was processed
 		int frameLen = 0; //length of each frame (should be 250 during testing)
 		int idx = 0;	//just for doing business on first frame
-		String header="";
+		EEGHeader header = new EEGHeader();
 		// get the actual float data from each frame
 		// and combine it into one long array that can be subsectioned
-		for(Tuple3<Integer,String,float[]> frame: frames){
+		for(Tuple3<Integer,EEGHeader,float[]> frame: frames){
 			
 			//grab data (for convenience)
 			float[] frameData = frame.f2;
@@ -67,7 +69,7 @@ public class EEGProcessAllWindowFunction
 		}
 		startIdx -= frameLen;
 
-		for(Tuple3<Integer, String, float[]> frame: frames){
+		for(Tuple3<Integer, EEGHeader, float[]> frame: frames){
 			frame.f0 = startIdx;
 		}
 	}
