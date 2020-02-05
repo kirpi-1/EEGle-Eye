@@ -15,7 +15,6 @@ import eegstreamerutils.EEGHeader;
 
 public class EEGProcessAllWindowFunction
 	extends ProcessAllWindowFunction<Tuple3<Integer,EEGHeader,float[]>, Tuple2<EEGHeader, float[]>, TimeWindow> {
-	
 	final static Logger log = LogManager.getLogger(EEGProcessAllWindowFunction.class.getName());
 	
 	@Override
@@ -66,9 +65,9 @@ public class EEGProcessAllWindowFunction
 		
 		// create a sliding window along the data and push that to stream out
 		int startIdx=lastIdx;
-		int chunkLength = 250;
+		int chunkLength = header.sampling_rate;
 		int numChannels = header.num_channels; // need number of channels for proper spacing
-		int stride = 50;
+		int stride = header.sampling_rate/5;
 		int chunkNum=0;
 		while(startIdx + chunkLength*numChannels < data.length){
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength*numChannels);
