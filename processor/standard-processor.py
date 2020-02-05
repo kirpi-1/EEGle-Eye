@@ -32,7 +32,7 @@ in_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',cr
 in_channel = in_connection.channel()
 in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 
-out_connection = pika.BlockingConnectin(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 out_channel = out_connection.channel()
 out_channel.queue_declare(queue=out_queue,arguments=ars,durable = True)
 
