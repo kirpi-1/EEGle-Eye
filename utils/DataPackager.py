@@ -1,6 +1,7 @@
 import struct
 import json
 import sys
+import numpy as np
 
 def packHeaderAndData(header, data):
 	# header - dictionary of header items
@@ -16,13 +17,19 @@ def packHeaderAndData(header, data):
 	
 def unpackHeaderAndData(message):
 	headerSize = int.from_bytes(message[0:3],byteorder="little");
-	fmt = "<i" + str(headerSize) + "s"
-	o = struct.unpack(fmt, message[0:headerSize+4])
-	print(o)
-	#fmt = "<i" + str(headerSize) + "s" + str(header['num_channels
-	
+	fmt = "<" + str(headerSize) + "s"
+	# read starting from byte 4 since bytes 0-3 are header size int
+	h = struct.unpack(fmt, message[4:headerSize+4])
+	header = json.loads(h[0])
+	# use header to determine size of actual data
+	totalSamples = header['num_channels']*header['num_samples']
+	fmt = "<" + str(totalSamples) + "f"
+	d = np.array(struct.unpack(fmt, message[headerSize+4:]))
+	data = d.reshape((header['num_samples'],header['num_channels']))
+	return header, data	
 
-def makeHeader(userName, frameNumber, timeStamp, channelNames, numSamples, numChannels, mlModel='default', sampling_rate=250):
+def makeHeader(userName, frameNumber, timeStamp, channelNames, \
+		numSamples,	numChannels, mlModel='default', sampling_rate=250):
 	#frame number	
 	#sampling rate
 	#number of channels

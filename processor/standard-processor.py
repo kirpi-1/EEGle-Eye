@@ -5,6 +5,7 @@ import sys, signal
 # import visdom
 import struct
 import json
+sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData
 
 # vis = visdom.Visdom();
