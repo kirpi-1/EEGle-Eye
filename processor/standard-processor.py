@@ -32,6 +32,12 @@ in_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',cr
 in_channel = in_connection.channel()
 in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 
+
+out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+out_channel = out_connection.channel()
+
+
+
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
 	normal_cutoff = cutoff / nyq
@@ -72,11 +78,7 @@ def nparray_callback(ch, method, props, body):
 	print("eegfft:",eegfft.shape)
 	data = np.hstack([time,eegfft]);
 	frame = packHeaderAndData(header,data)
-	
-	out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
-	out_channel = out_connection.channel()
-	out_channel.queue_declare(queue=out_queue,arguments=args,durable = True)
-
+	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
 	out_channel.basic_publish(exchange='',
 						routing_key=header['ML_model'],
 						body=frame)#properties=props,
