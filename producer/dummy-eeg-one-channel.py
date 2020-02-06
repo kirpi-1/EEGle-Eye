@@ -64,8 +64,8 @@ while(True):
 	sampleSize = 250*4*2;
 	
 	print(header)
-	print("frame length is:", len(frame))
-	print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
+	#print("frame length is:", len(frame))
+	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	
 	channel.basic_publish(exchange='',
 						routing_key=routing_key,
