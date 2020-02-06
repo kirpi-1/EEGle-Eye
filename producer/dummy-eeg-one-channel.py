@@ -46,7 +46,7 @@ def makeSignal(t, freqs,cyclingFreq = 11):
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)+np.random.randn(t.size)
 	cycleTime = t % fullCycle - fullCycle/2
-	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)	
+	signal = signal + 2*np.cos(2*np.pi*t*11)*(cycleTime/fullCycle)	
 	signal = signal / len(freqs); #normalize
 	return signal
 
