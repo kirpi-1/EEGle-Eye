@@ -39,12 +39,11 @@ plotTime = np.zeros((250*4))
 plotSignal = np.zeros((250*4))
 
 def makeSignal(t, freqs,cyclingFreq = 11):
-	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
 	signal = np.zeros(t.size)
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)+np.random.randn(t.size)
 	cycleTime = t % fullCycle - fullCycle/2
-	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)		
+	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)	
 	signal = signal / len(freqs); #normalize
 	signal = np.arange(0,250,dtype=np.float)
 	return signal
