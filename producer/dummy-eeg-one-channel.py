@@ -19,11 +19,11 @@ signal.signal(signal.SIGINT, signal_handler)
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
 credentials = pika.PlainCredentials("producer","producer")
-
+rmqIP = '10.0.0.12'
 routing_key="eeg"
 corr_id = str(uuid.uuid4())
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
 channel = connection.channel()
 
 args = dict()
@@ -38,6 +38,9 @@ print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
 plotSignal = np.zeros((250*4))
 
+#vis = visdom.Visdom()
+#linwin = visdom.line([0])
+
 def makeSignal(t, freqs,cyclingFreq = 11):
 	signal = np.zeros(t.size)
 	for f in freqs:
@@ -45,7 +48,6 @@ def makeSignal(t, freqs,cyclingFreq = 11):
 	cycleTime = t % fullCycle - fullCycle/2
 	signal = signal + 2*np.cos(2*np.pi*t*freqs[1])*(cycleTime/fullCycle)	
 	signal = signal / len(freqs); #normalize
-	signal = np.arange(0,250,dtype=np.float)
 	return signal
 
 #vis = visdom.Visdom()
@@ -61,7 +63,7 @@ while(True):
 	frame = packHeaderAndData(header,data)
 	headerSize = int.from_bytes(frame[0:3],byteorder='little')
 	sampleSize = 250*4*2;
-	
+	#vis.line(win=linwin,Y=signal[0,:])
 	print(header)
 	#print("frame length is:", len(frame))
 	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
