@@ -47,3 +47,18 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	h['channel_names']=channelNames
 	
 	return h
+
+
+def splitTimeAndEEG(header, data):
+	timeIdx = 0;
+	for i,n in enumerate(header['channel_names']):
+		if n.lower()=='time':
+			timeIdx=i;
+			break;
+	# get time data
+	timeChan = np.expand_dims(data[:,timeIdx],axis=1)
+	mask = np.ones(header['num_channels'],dtype=bool)
+	mask[timeIdx]=False
+	# extract just eeg data
+	eeg = data[:,mask]
+	return timeChan, eeg

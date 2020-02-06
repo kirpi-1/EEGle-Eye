@@ -2,12 +2,11 @@ import pika
 import numpy as np
 import os
 import sys, signal
-# import visdom
-import struct
-import json
 sys.path.append('../utils/')
-from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData
+from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
+	splitTimeAndEEG
 from scipy.signal import butter, lfilter, freqz
+import logging
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -24,7 +23,6 @@ credentials = pika.PlainCredentials("processor","processor")
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
 in_queue = "processing"
-out_queue = "ML"
 args = dict()
 args['message-ttl']=10000
 
@@ -36,7 +34,7 @@ in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 out_channel = out_connection.channel()
 
-
+logger = logging.getLogger('standard-processor')
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
@@ -50,43 +48,28 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	return y
 
 
+
 def nparray_callback(ch, method, props, body):
 	out = list();
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
 	header, data = unpackHeaderAndData(body)
 	#get channel number for time/TIME
-	timeIdx = 0;
-	for i,n in enumerate(header['channel_names']):
-		if n.lower()=='time':
-			timeIdx=i;
-			break;
-	# get time data
-	time = np.expand_dims(data[:,timeIdx],axis=1)
-	mask = np.ones(header['num_channels'],dtype=bool)
-	mask[timeIdx]=False
-	# extract just eeg data
-	eeg = data[:,mask]
+	timeChan, eeg = splitTimeAndEEG(header, data)
 	# lowpass first
 	eeg = butterworth_filter(eeg,BANDSTOP_FREQ,header['sampling_rate'],type='bandstop')
 	# then highpass
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
-	#o = unpackNameAndData(body);
-	#print("time:", time.shape)
-	#print("eegfft:",eegfft.shape)
-	print("got header number", header["frame_number"], "starting at",time[0])
-	freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
+	#print()
+	logger.debug("got header number {} starting at time {}".format(header["frame_number"],time[0]))
+	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([time,eegfft])
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
 	out_channel.basic_publish(exchange='',
 						routing_key=header['ML_model'],
 						body=frame)#properties=props,
-						
-	#print(samples)
-	
-	
 
 in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 

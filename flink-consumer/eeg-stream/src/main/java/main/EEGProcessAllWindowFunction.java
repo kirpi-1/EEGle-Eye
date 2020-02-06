@@ -48,16 +48,16 @@ public class EEGProcessAllWindowFunction
 			data = Arrays.copyOf(data, data.length+frameData.length);
 			System.arraycopy(frameData, 0, data,prevLength,frameData.length);
 			idx++;
-			log.info("=====================================");
-		    log.info(String.format("user name   : %s", header.user_name));
-        	log.info(String.format("frame number: %d", header.frame_number));
-        	log.info(String.format("timestamp   : %d", header.time_stamp));
-        	log.info(String.format("ML Model    : %s", header.ML_model));
-        	log.info(String.format("samplingrate: %d", header.sampling_rate));
-        	log.info(String.format("num channels: %d", header.num_channels));
-        	log.info(String.format("num samples : %d", header.num_samples));
-        	log.info(String.format("    %s",header.channel_names));
-        	log.info("=====================================");
+			log.debug("=====================================");
+		    log.debug(String.format("user name   : %s", header.user_name));
+        	log.debug(String.format("frame number: %d", header.frame_number));
+        	log.debug(String.format("timestamp   : %d", header.time_stamp));
+        	log.debug(String.format("ML Model    : %s", header.ML_model));
+        	log.debug(String.format("samplingrate: %d", header.sampling_rate));
+        	log.debug(String.format("num channels: %d", header.num_channels));
+        	log.debug(String.format("num samples : %d", header.num_samples));
+        	log.debug(String.format("    %s",header.channel_names));
+        	log.debug("=====================================");
 			//System.out.println(String.format("Processing: %s",header));
 		}
 		if(numMsgs==1)
