@@ -76,7 +76,7 @@ def nparray_callback(ch, method, props, body):
 	#print("time:", time.shape)
 	#print("eegfft:",eegfft.shape)
 	print("got header number", header["frame_number"], "starting at",time[0])
-
+	freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([time,eegfft])
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
