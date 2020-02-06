@@ -16,7 +16,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 HIGHPASS_CUTOFF = 1
-LOWPASS_CUTOFF = 50
+BANDSTOP_FREQ = 60
 
 # connection settings
 credentials = pika.PlainCredentials("processor","processor")
@@ -67,7 +67,7 @@ def nparray_callback(ch, method, props, body):
 	# extract just eeg data
 	eeg = data[:,mask]
 	# lowpass first
-	eeg = butterworth_filter(eeg,LOWPASS_CUTOFF,header['sampling_rate'])
+	eeg = butterworth_filter(eeg,BANDSTOP_FREQ,header['sampling_rate'],type='bandstop')
 	# then highpass
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
