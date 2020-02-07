@@ -1,4 +1,4 @@
-package mykeyselector
+package mykeyselector;
 
 import org.apache.flink.api.java.functions.KeySelector;
 
