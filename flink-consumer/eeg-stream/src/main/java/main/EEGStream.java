@@ -29,6 +29,7 @@ import eegProcess.EEGProcessAllWindowFunction;
 import publishOptions.MyRMQSinkPublishOptions;
 
 import eegstreamerutils.EEGHeader;
+import mykeyselector.UserKeySelector;
 
 public class EEGStream{
 
@@ -54,7 +55,8 @@ public class EEGStream{
 			).setParallelism(1); //non-parallel source is only required for exactly-once
 
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
-			.timeWindowAll(Time.seconds(2), Time.seconds(1))
+			.keyBy(new UserKeySelector())
+			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
 			.process(new EEGProcessAllWindowFunction());
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
