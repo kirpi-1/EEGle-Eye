@@ -12,6 +12,8 @@ import org.apache.flink.streaming.util.serialization.AbstractDeserializationSche
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -21,9 +23,11 @@ import eegstreamerutils.EEGHeader;
 
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, EEGHeader, float[]>> {
 
+	final static Logger log = LogManager.getLogger(EEGDeserializationSchema.class.getName());
+
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
-		buff.position(offset);
 		float[] res = new float[(buff.array().length-offset)/4];
+		buff.position(offset);
 		for(int i=0;i<res.length;i++){
 			float x = buff.getFloat();
 			res[i] = x;
@@ -45,21 +49,8 @@ public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tupl
 		buff.order(ByteOrder.LITTLE_ENDIAN); // make sure we're using the correct byte order
 		int headerSize = buff.getInt();
 		String header = BytesToHeader(buff, headerSize);
-		System.out.println("=====================================");
-		System.out.println(header);
 		Gson gson = new Gson();
 		EEGHeader eegh = gson.fromJson(header, EEGHeader.class);
-		System.out.println(String.format("frame number: %d", eegh.frame_number));
-		System.out.println(String.format("user name   : %s", eegh.user_name));
-		System.out.println(String.format("ML Model    : %s", eegh.ML_model));
-		System.out.println(String.format("samplingrate: %d", eegh.sampling_rate));
-		System.out.println(String.format("num channels: %d", eegh.num_channels));
-		System.out.println(String.format("num samples : %d", eegh.num_samples));
-		System.out.println(String.format("    %s",eegh.channel_names));
-		System.out.println("=====================================");
-
-
-
 		return new Tuple3(0, eegh, BytesToFloats(buff,headerSize+4));
 
 	}

@@ -25,10 +25,11 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
 import deserializationSchemas.EEGDeserializationSchema;
 import serializationSchemas.EEGSerializer;
-import eegProcess.EEGProcessAllWindowFunction;
+import eegProcess.EEGProcessWindowFunction;
 import publishOptions.MyRMQSinkPublishOptions;
 
 import eegstreamerutils.EEGHeader;
+import mykeyselector.UserKeySelector;
 
 public class EEGStream{
 
@@ -54,8 +55,9 @@ public class EEGStream{
 			).setParallelism(1); //non-parallel source is only required for exactly-once
 
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
-			.timeWindowAll(Time.seconds(2), Time.seconds(1))
-			.process(new EEGProcessAllWindowFunction());
+			.keyBy(new UserKeySelector())
+			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
+			.process(new EEGProcessWindowFunction());
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
 			.setHost("10.0.0.12")
