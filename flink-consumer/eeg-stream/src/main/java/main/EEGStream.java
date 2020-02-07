@@ -25,7 +25,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
 import deserializationSchemas.EEGDeserializationSchema;
 import serializationSchemas.EEGSerializer;
-import eegProcess.EEGProcessAllWindowFunction;
+import eegProcess.EEGProcessWindowFunction;
 import publishOptions.MyRMQSinkPublishOptions;
 
 import eegstreamerutils.EEGHeader;
