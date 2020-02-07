@@ -34,7 +34,7 @@ channel.queue_declare(queue=routing_key,arguments=args,durable = True)
 props = pika.BasicProperties(correlation_id=corr_id)
 
 startTime = 0;
-freqs = [1,4,11,22,35,80];
+freqs = [1,7,15,25,41,80];
 fullCycle=10
 print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((250*4))
@@ -48,7 +48,7 @@ def makeSignal(t, freqs,cyclingFreq = 11):
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)+np.random.randn(t.size)
 	cycleTime = t % fullCycle - fullCycle/2
-	signal = signal + 2*np.cos(2*np.pi*t*11)*(cycleTime/fullCycle)	
+	signal = signal + 2*np.cos(2*np.pi*t*25)*(cycleTime/fullCycle)	
 	signal = signal / len(freqs); #normalize
 	return signal
 
