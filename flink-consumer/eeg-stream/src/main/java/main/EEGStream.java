@@ -57,7 +57,7 @@ public class EEGStream{
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new UserKeySelector())
 			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
-			.process(new EEGProcessAllWindowFunction());
+			.process(new EEGProcessWindowFunction());
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
 			.setHost("10.0.0.12")
