@@ -62,9 +62,9 @@ def nparray_callback(ch, method, props, body):
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
 	#print()
-	logger.debug("got header number {} starting at time {}".format(header["frame_number"],time[0]))
+	logger.debug("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
-	data = np.hstack([time,eegfft])
+	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
 	out_channel.basic_publish(exchange='',
