@@ -22,6 +22,7 @@ signal.signal(signal.SIGINT, signal_handler)
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
 credentials = pika.PlainCredentials("producer","producer")
 rmqIP = '10.0.0.12'
+userName = "two"
 routing_key="eeg"
 corr_id = str(uuid.uuid4())
 
@@ -60,7 +61,7 @@ while(True):
 	signal = makeSignal(t,freqs,freqs[2])
 	
 	data = np.vstack([t,signal]).transpose()
-	header = makeHeader("test",frameNumber, startTime,['time','Fpz'],\
+	header = makeHeader(userName,frameNumber, startTime,['time','Fpz'],\
 		 numSamples=250,numChannels=2)
 	frame = packHeaderAndData(header,data)
 	headerSize = int.from_bytes(frame[0:3],byteorder='little')
