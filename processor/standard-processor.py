@@ -15,7 +15,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 HIGHPASS_CUTOFF = 1
-BANDSTOP_FREQ = [59, 61]
+BANDSTOP_FREQ = np.array([59, 61])
 
 # connection settings
 credentials = pika.PlainCredentials("processor","processor")
