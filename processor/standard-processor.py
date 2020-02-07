@@ -34,6 +34,7 @@ in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 out_channel = out_connection.channel()
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('standard-processor')
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
