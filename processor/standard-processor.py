@@ -34,8 +34,8 @@ in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
 out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
 out_channel = out_connection.channel()
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('standard-processor')
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
@@ -63,7 +63,7 @@ def nparray_callback(ch, method, props, body):
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
 	#print()
-	logger.debug("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
+	logger.info("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
