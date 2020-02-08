@@ -64,7 +64,7 @@ public class EEGStream{
 		if(line.hasOption("configFile")){
 			configFile = line.getOptionValue("configFile");
 		}
-		Properties.
+		Properties defaultProps = new Properties()
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// required for exactly-once or at-least-once guarantees
 		//env.enableCheckpointing();
