@@ -3,6 +3,7 @@ import os
 import time
 import sys, signal
 import numpy as np
+import numpy.matlib
 import uuid
 import struct
 import visdom
@@ -59,7 +60,7 @@ frameNumber = 0;
 while(True):
 	t = np.arange(startTime,startTime+1,1/250,dtype=np.float32)
 	signal = makeSignal(t,freqs,freqs[2])
-	
+	signal = np.matlib.repmat(signal,32,1)
 	data = np.vstack([t,signal]).transpose()
 	header = makeHeader(userName,frameNumber, startTime,['time','Fpz'],\
 		 numSamples=250,numChannels=2)

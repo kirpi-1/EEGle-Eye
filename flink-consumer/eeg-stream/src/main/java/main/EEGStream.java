@@ -1,6 +1,8 @@
 package eegconsumer;
 
 import java.io.IOException;
+import java.util.Properties;
+
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 
@@ -31,9 +33,38 @@ import publishOptions.MyRMQSinkPublishOptions;
 import eegstreamerutils.EEGHeader;
 import mykeyselector.UserKeySelector;
 
-public class EEGStream{
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
 
+public class EEGStream{
 	public static void main(String[] args) throws Exception {
+		Options options = new Options();
+		Option configFile = Option.Builder.("c")
+								.required(false)
+								.longOpt("configFile")
+								.hasArg()
+								.numberOfArgs(1)
+								.desc("use file for config")
+								.build();
+		options.addOption(configFile);
+		
+		//create parser
+		CommandLineParser parser = new DefaultParser();
+		CommandLine line;
+		try {
+			line = parser.parse(options, args);
+		}
+		catch(ParseException exp){
+			System.err.println("parsing failed. Reason: " + exp.getMessage());
+		}
+		String configFile = "~/.eeg-stream.conf"
+		
+		if(line.hasOption("configFile")){
+			configFile = line.getOptionValue("configFile");
+		}
+		Properties.
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// required for exactly-once or at-least-once guarantees
 		//env.enableCheckpointing();
