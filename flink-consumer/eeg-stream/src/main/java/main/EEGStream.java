@@ -1,6 +1,7 @@
 package eegconsumer;
 
 import java.io.IOException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -53,7 +54,8 @@ public class EEGStream{
 								.build();
 		options.addOption(configOptions);
 		
-		String configFile = "~/eeg-stream.conf";
+		File homedir = new File(System.getProperty("user.home"));
+		File configFile = new File(homedir,"eeg-stream.conf");
 		
 		//create parser
 		CommandLineParser parser = new DefaultParser();		
@@ -64,7 +66,7 @@ public class EEGStream{
 			System.out.println(line.hasOption("config-file"));
 			if(line.hasOption("config-file")){
 				System.out.println(line.getOptionValue("config-file"));
-				configFile = line.getOptionValue("config-file");
+				configFile = new File(line.getOptionValue("config-file"));
 			}
 		}
 		catch(ParseException exp){
