@@ -30,6 +30,7 @@ rmqExchange = args.exchange
 routing_key=args.queue_name
 in_queue = args.input_queue
 
+
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
 									credentials=cred, \
@@ -42,6 +43,14 @@ basicProps = pika.BasicProperties()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+print("ip",rmqIP)
+print("port",args.port)
+print("credentials",cred)
+print("virtual_host",args.vhost)
+print("in_queue",in_queue)
+
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
@@ -74,8 +83,9 @@ def nparray_callback(ch, method, props, body):
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
 	print("sending to",args.exchange,"with routing key:",header['ML_model'])
 	
+	channel.basic_publish(exchange="eeg"
 	channel.basic_publish(exchange=args.exchange,
-						routing_key=header['ML_model'],
+						routing_key="ml.default",
 						properties=basicProps,
 						body=frame)#properties=props,
 
