@@ -82,9 +82,8 @@ def nparray_callback(ch, method, props, body):
 	frame = packHeaderAndData(header,data)
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
 	print("sending to",args.exchange,"with routing key:",header['ML_model'])
-	
-	channel.basic_publish(exchange="eeg"
-	channel.basic_publish(exchange=args.exchange,
+		
+	channel.basic_publish(exchange="main",
 						routing_key="ml.default",
 						properties=basicProps,
 						body=frame)#properties=props,
