@@ -28,8 +28,7 @@ credentials = pika.PlainCredentials(args.user_name,args.password)
 in_queue = "processing"
 rmqIP = args.host
 rmqExchange = args.exchange
-rmqargs = dict()
-rmqargs['x-message-ttl']=10000
+
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
 									credentials=credentials, \
@@ -58,7 +57,7 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 
 def nparray_callback(ch, method, props, body):
 	out = list();
-	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, rmqargs
+	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF
 	header, data = unpackHeaderAndData(body)
 	#get channel number for time/TIME
 	timeChan, eeg = splitTimeAndEEG(header, data)
@@ -73,10 +72,11 @@ def nparray_callback(ch, method, props, body):
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
-	out_channel.queue_declare(queue="ml."+header['ML_model'],passive=True, durable = True)
-	print("sending with routing key:","ml."+header['ML_model'])
+	rkey = "ml."+header['ML_model']
+	#out_channel.queue_declare(queue=rkey,passive=True, durable = True)
+	print("sending with routing key:",rkey)
 	out_channel.basic_publish(exchange=rmqExchange,
-						routing_key="ml."+header['ML_model'],
+						routing_key=rkey,
 						body=frame)#properties=props,
 
 in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
