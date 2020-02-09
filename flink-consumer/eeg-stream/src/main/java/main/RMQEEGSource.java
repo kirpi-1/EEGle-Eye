@@ -7,9 +7,15 @@ import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
 import java.util.Map;
 import java.util.HashMap;
 
-public class RMQEEGSource extends RMQSource<Tuple3<Integer, EEGHeader, float[]>>{	
+public class RMQEEGSource<OUT> extends RMQSource<OUT>{	
 	int messageTTL = 60000;
 	
+	public RMQEEGSource(RMQConnectionConfig rmqConnectionConfig,
+						String queueName,
+						boolean usesCorrelationID,
+						Deserializationschema<OUT> deserializationSchema){
+		super(rmqConnectionConfig, queueName, usesCorrelationID, deserializationSchema);
+	}
 	public RMQEEGSource setMessageTTL(int newTTL){
 		this.messageTTL = newTTL;
 		return this;
