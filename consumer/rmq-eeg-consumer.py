@@ -6,7 +6,8 @@ import visdom
 import struct
 
 vis = visdom.Visdom();
-win = vis.line([0])
+power = np.zeros((250,20));
+win = vis.heatmap(power)
 startTime=0;
 
 def signal_handler(signal, frame):
@@ -19,20 +20,35 @@ def unpackNameAndData(data):
 	fmt = "8s" + str(250) + "f"	
 	o = struct.unpack(fmt,data)
 	return o
+	
+
 
 def nparray_callback(ch, method, props, body):
-	global startTime;	
-	out = list();	
-	print("Total byte size = ", len(body))
-	
+	global startTime;
+	global power;
+	out = list();
+
 	d = body
 	#print("Size = ", len(d))
 	out = unpackNameAndData(d)
 	#print(out)
 	print("starting at time ", startTime)
 	samples = list(out[1:]);
-	t = np.arange(startTime,startTime+len(samples))/len(samples)
-	vis.line(X=t,Y=samples,update='append',win=win)
+	p = np.absolute(np.fft.fft(samples)).reshape([-1,1])
+	f = np.arange(0,1,1/250)*250
+	for c in np.arange(power.shape[1]-1):
+		power[:,c] = power[:,c+1]
+	power[:,19] = p.squeeze()
+	#t = np.arange(startTime,startTime+len(samples))/len(samples)
+	#vis.line(X=t,Y=samples,update='append',win=win)
+	opts = {'xmin':0,'xmax':50,
+	'layoutopts': \
+		{'plotly': {'yaxis': {'range': [0, 35],'autorange': False,
+      }
+    }
+  }
+}
+	vis.heatmap(power,win=win,opts=opts)
 	startTime=startTime+50/250;
 	#o = unpackNameAndData(body);
 	#print(samples)
