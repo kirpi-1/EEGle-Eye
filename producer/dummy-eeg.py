@@ -27,6 +27,8 @@ parser.add_argument("-z", "--sample-time",default=1.0, type=float)
 parser.add_argument("-q", "--queue-name",default="eeg",type=str)
 parser.add_argument("-x", "--exchange",default="eegle",type=str)
 parser.add_argument("-t", "--host",default="10.0.0.5",type=str)
+parser.add_argument("-o", "--port",default=5672,type=int)
+parser.add_argument("-v", "--vhost",default="eegle",type=str)
 parser.add_argument("-m", "--user-name", default="producer",type=str)
 parser.add_argument("-p", "--password", default="producer",type=str)
 parser.add_argument("-a", "--source-name", default="one", type=str)
@@ -41,7 +43,10 @@ rmqIP = args.host
 userName = args.source_name
 routing_key=args.queue_name
 corr_id = str(uuid.uuid4())
-
+params = pika.ConnectionParameters(	host=rmqIP, \
+									port=args.port,\
+									credentials=credentials, \
+									virtual_host=args.vhost)
 connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
 channel = connection.channel()
 
