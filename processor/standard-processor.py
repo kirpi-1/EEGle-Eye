@@ -86,7 +86,8 @@ def nparray_callback(ch, method, props, body):
 	channel.basic_publish(exchange="main",
 						routing_key="ml.default",
 						properties=basicProps,
-						body=frame)#properties=props,
+						body=frame,
+						mandatory=True)#properties=props,
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 
