@@ -8,8 +8,9 @@ import eegstreamerutils.EEGHeader;
 
 public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEGHeader, float[]>> {
 	public String queueName;
-	public void setQueueName(String newName){
-		queueName = newName;
+	public MyRMQSinkPublishOptions setQueueName(String newName){
+		this.queueName = newName;
+		return this;
 	}
 	@Override
 	public String computeExchange(Tuple2<EEGHeader, float[]> frame){
