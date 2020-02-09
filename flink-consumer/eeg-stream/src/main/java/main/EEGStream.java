@@ -33,6 +33,7 @@ import publishOptions.MyRMQSinkPublishOptions;
 import eegstreamerutils.EEGHeader;
 import mykeyselector.UserKeySelector;
 
+import org.apache.commons.cli;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -51,7 +52,7 @@ public class EEGStream{
 		options.addOption(configFile);
 		
 		//create parser
-		CommandLineParser parser = new DefaultParser();
+		CommandLineParser parser = new cli.DefaultParser();
 		CommandLine line;
 		try {
 			line = parser.parse(options, args);
