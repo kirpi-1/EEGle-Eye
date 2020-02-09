@@ -6,7 +6,7 @@ import argparse
 
 def getParser():
 	parser = argparse.ArgumentParser();
-	parser.add_argument("-n", "--num-chan", default=1,type=float)
+	parser.add_argument("-n", "--num-chan", default=1,type=int)
 	parser.add_argument("-c", "--cycle-freq", default=11,type=float)
 	parser.add_argument("-s", "--sampling-rate",default=250,type=int)
 	parser.add_argument("-z", "--sample-time",default=1.0, type=float)
