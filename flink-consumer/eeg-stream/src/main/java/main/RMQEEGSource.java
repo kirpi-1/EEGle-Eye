@@ -35,10 +35,3 @@ public class RMQEEGSource<OUT> extends RMQSource<OUT>{
 									
 	}
 }
-
-java.lang.String queue, 
-boolean passive, 
-boolean durable,
- boolean exclusive, 
- boolean autoDelete, 
- java.util.Map<java.lang.String,java.lang.Object> arguments)
