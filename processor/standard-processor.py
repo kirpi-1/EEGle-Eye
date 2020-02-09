@@ -17,6 +17,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 parser = RMQUtils.getParser()
+parser.add_argument("-i","--input-queue",default="processing")
 args = parser.parse_args()
 
 HIGHPASS_CUTOFF = 1
@@ -25,9 +26,9 @@ BANDSTOP_FREQ = np.array([59, 61])
 # connection settings
 credentials = pika.PlainCredentials(args.user_name,args.password)
 
-in_queue = "processing"
 rmqIP = args.host
 rmqExchange = args.exchange
+in_queue = args.input_queue
 
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
@@ -73,9 +74,9 @@ def nparray_callback(ch, method, props, body):
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	rkey = "ml"+header['ML_model']
-	#out_channel.queue_declare(queue=rkey,passive=True, durable = True)
-	print("sending to,",rmqExchange," with routing key:",rkey)
-	out_channel.basic_publish(exchange=rmqExchange,
+	out_channel.queue_declare(queue=rkey,durable = True)
+	print("sending to",args.exchange," with routing key:",rkey)
+	out_channel.basic_publish(exchange=args.exchange,
 						routing_key=rkey,
 						body=frame)#properties=props,
 
