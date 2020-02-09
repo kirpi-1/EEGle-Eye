@@ -51,7 +51,7 @@ connection = pika.BlockingConnection(params)
 channel = connection.channel()
 
 rmqargs = dict()
-rmqargs['message-ttl']=10000
+rmqargs['x-message-ttl']=10000
 channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
 #props = pika.BasicProperties(correlation_id=corr_id)
 
