@@ -9,13 +9,15 @@ import org.apache.flink.api.common.serialization.DeserializationSchema;
 import java.util.Map;
 import java.util.HashMap;
 
+import eegstreamer.utils.EEGHeader;
+
 public class RMQEEGSource<OUT> extends RMQSource<OUT>{	
 	int messageTTL = 60000;
 	
 	public RMQEEGSource(RMQConnectionConfig rmqConnectionConfig,
 						String queueName,
 						boolean usesCorrelationID,
-						Deserializationschema<OUT> deserializationSchema){
+						DeserializationSchema<OUT> deserializationSchema){
 		super(rmqConnectionConfig, queueName, usesCorrelationID, deserializationSchema);
 	}
 	public RMQEEGSource setMessageTTL(int newTTL){
