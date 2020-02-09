@@ -85,6 +85,7 @@ public class EEGStream{
 		String RMQ_USERNAME= defaultProps.getProperty("RMQ_USERNAME", "consumer");
 		String RMQ_PASSWORD= defaultProps.getProperty("RMQ_PASSWORD", "consuemr");
 		String RMQ_PUBLISH_QUEUE= defaultProps.getProperty("RMQ_PUBLISH_QUEUE","processing");
+		String RMQ_SOURCE_QUEUE= defaultProps.getProperty("RMQ_SOURCE_QUEUE","eeg");
 		
 		int PROCESSING_WINDOW_LENGTH = 1;
 		try{
@@ -128,7 +129,9 @@ public class EEGStream{
 			.keyBy(new UserKeySelector())
 			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
 			.process(new EEGProcessWindowFunction()
-							.setWindowLength();
+							.setWindowLength(PROCESSING_WINDOW_LENGTH)
+							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
+							);
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
 			.setHost(RMQ_SERVER)
