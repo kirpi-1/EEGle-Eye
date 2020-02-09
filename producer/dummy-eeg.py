@@ -26,7 +26,7 @@ parser.add_argument("-s", "--sampling-rate",default=250,type=int)
 parser.add_argument("-z", "--sample-time",default=1.0, type=float)
 parser.add_argument("-q", "--queue-name",default="eeg",type=str)
 parser.add_argument("-x", "--exchange",default="main",type=str)
-parser.add_argument("-t", "--host",default="10.0.0.5",type=str)
+parser.add_argument("-t", "--host",default="10.0.0.14",type=str)
 parser.add_argument("-o", "--port",default=5672,type=int)
 parser.add_argument("-v", "--vhost",default="eegle",type=str)
 parser.add_argument("-m", "--user-name", default="producer",type=str)
@@ -81,12 +81,15 @@ while(True):
 	t = np.arange(startTime,startTime+args.sample_time,1/args.sampling_rate,dtype=np.float32)
 	signal = np.zeros((len(t),args.num_chan+1))
 	signal[:,0] = t
+	channelNames = list('time');
 	for c in np.arange(args.num_chan):
-		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq);
-	header = makeHeader(userName,frameNumber, startTime,['time','Fpz'],\
+		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
+		channelNames.append(str(c))
+		
+	header = makeHeader(userName,frameNumber, startTime,channelName,\
 		 numSamples=args.sampling_rate,numChannels=signal.shape[1])
 	frame = packHeaderAndData(header,signal)
-	headerSize = int.from_bytes(frame[0:3],byteorder='little')	
+	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
 	print(header)
 	#vis.line(win=linwin,Y=signal[0,:])	
 	#print("frame length is:", len(frame))
