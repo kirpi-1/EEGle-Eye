@@ -92,6 +92,7 @@ public class EEGStream{
 		String RMQ_PASSWORD= defaultProps.getProperty("RMQ_PASSWORD", "consuemr");
 		String RMQ_PUBLISH_QUEUE= defaultProps.getProperty("RMQ_PUBLISH_QUEUE","processing");
 		String RMQ_SOURCE_QUEUE= defaultProps.getProperty("RMQ_SOURCE_QUEUE","eeg");
+		String RMQ_EXCHANGE = defaultProps.getProperty("RMQ_EXCHANGE","main");
 		
 		int PROCESSING_WINDOW_LENGTH = 1;
 		try{
