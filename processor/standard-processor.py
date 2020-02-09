@@ -73,9 +73,9 @@ def nparray_callback(ch, method, props, body):
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
-	out_channel.queue_declare(queue=header['ML_model'],durable = True)
+	out_channel.queue_declare(queue="ml."+header['ML_model'],durable = True)
 	out_channel.basic_publish(exchange=rmqExchange,
-						routing_key=header['ML_model'],
+						routing_key="ml."+header['ML_model'],
 						body=frame)#properties=props,
 
 in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
