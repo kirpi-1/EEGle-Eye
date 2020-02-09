@@ -1,4 +1,4 @@
-package eegstreamerutils;
+package eegstreamer.utils;
 
 import java.util.List;
 

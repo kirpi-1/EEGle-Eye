@@ -1,4 +1,4 @@
-package serializationSchemas;
+package eegstreamer.serialization;
 
 import org.apache.flink.api.common.serialization.SerializationSchema;
 
@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import eegstreamerutils.EEGHeader;
+import eegstreamer.utils.EEGHeader;
 
 
 public class EEGSerializer implements SerializationSchema<Tuple2<EEGHeader, float[]>> {

@@ -23,8 +23,8 @@ startTime=0;
 rmqIP = '54.201.180.173'
 
 def signal_handler(signal, frame):
-    print("\nprogram exiting gracefully")
-    sys.exit(0)
+	print("\nprogram exiting gracefully")
+	sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 

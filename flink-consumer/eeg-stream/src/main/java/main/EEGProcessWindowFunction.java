@@ -1,4 +1,6 @@
-package eegProcess;
+package eegstreamer.process;
+
+import eegstreamer.utils.EEGHeader;
 
 import java.util.Arrays;
 
@@ -11,12 +13,25 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import eegstreamerutils.EEGHeader;
+
 
 public class EEGProcessWindowFunction
 	extends ProcessWindowFunction<Tuple3<Integer,EEGHeader,float[]>, Tuple2<EEGHeader, float[]>, String, TimeWindow> {
-	final static Logger log = LogManager.getLogger(EEGProcessAllWindowFunction.class.getName());
+	final static Logger log = LogManager.getLogger(EEGProcessWindowFunction.class.getName());
 		
+	private float windowLengthInSec = 0;
+	private float windowOverlap = 0;
+	
+	public EEGProcessWindowFunction setWindowLength(float newLength){		
+		this.windowLengthInSec = newLength;
+		return this;
+	}
+	public EEGProcessWindowFunction setWindowOverlap(float newLength){
+		this.windowOverlap = newLength;
+		return this;
+	}
+	
+	
 	@Override
 	public void process(String key, 
 						Context context, 
@@ -68,16 +83,16 @@ public class EEGProcessWindowFunction
 			frameLen=0;
 		
 		// create a sliding window along the data and push that to stream out
-		int startIdx=lastIdx;
-		int chunkLength = header.sampling_rate;
-		int numChannels = header.num_channels; // need number of channels for proper spacing
-		int stride = header.sampling_rate/5;
+		int startIdx=lastIdx;		
+		int numChannels = header.num_channels; // need number of channels for proper spacing		
 		int chunkNum=0;
-		while(startIdx + chunkLength*numChannels < data.length){
-			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+chunkLength*numChannels);
+		int windowLength = (int)(windowLengthInSec*header.sampling_rate);
+		int strideLength = (int)((1-windowOverlap)*windowLengthInSec*header.sampling_rate);
+		while(startIdx + windowLength*numChannels < data.length){
+			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+windowLength*numChannels);
 			out.collect(new Tuple2(header,tmp));
 			// multiply by number of channels to move proper number of values forward
-			startIdx = startIdx + stride*numChannels;
+			startIdx = startIdx + strideLength*numChannels;
 			chunkNum++;
 		}
 		startIdx -= frameLen; // since the front frame will drop off, subtract it's length from startIdx

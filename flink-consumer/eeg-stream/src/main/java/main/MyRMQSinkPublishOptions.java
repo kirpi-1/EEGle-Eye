@@ -1,15 +1,20 @@
-package publishOptions;
+package eegstreamer.publishoptions;
 
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSinkPublishOptions;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import org.apache.flink.api.java.tuple.Tuple2;
 
-import eegstreamerutils.EEGHeader;
+import eegstreamer.utils.EEGHeader;
 
 public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEGHeader, float[]>> {
+	public String queueName;
+	public MyRMQSinkPublishOptions setQueueName(String newName){
+		this.queueName = newName;
+		return this;
+	}
 	@Override
 	public String computeExchange(Tuple2<EEGHeader, float[]> frame){
-		return "";
+		return "main";
 	}
 	@Override
 	public BasicProperties computeProperties(Tuple2<EEGHeader, float[]> frame){
@@ -19,7 +24,7 @@ public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEG
 	}
 	@Override
 	public String computeRoutingKey(Tuple2<EEGHeader, float[]> frame){
-		return "processing";
+		return queueName;
 	}
 	
 }
