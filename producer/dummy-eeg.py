@@ -25,20 +25,20 @@ args = parser.parse_args()
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
-credentials = pika.PlainCredentials(args.user_name,args.password)
+cred = pika.PlainCredentials(args.user_name,args.password)
 rmqIP = args.host
 userName = args.source_name
 routing_key=args.queue_name
-corr_id = str(uuid.uuid4())
+#corr_id = str(uuid.uuid4())
+rmqargs = dict()
+rmqargs['x-message-ttl']=10000
+
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
-									credentials=credentials, \
+									credentials=cred, \
 									virtual_host=args.vhost)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
-
-rmqargs = dict()
-rmqargs['x-message-ttl']=10000
 channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
 #props = pika.BasicProperties(correlation_id=corr_id)
 
