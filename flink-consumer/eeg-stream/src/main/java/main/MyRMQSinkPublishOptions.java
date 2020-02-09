@@ -4,7 +4,7 @@ import org.apache.flink.streaming.connectors.rabbitmq.RMQSinkPublishOptions;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import org.apache.flink.api.java.tuple.Tuple2;
 
-import eegstreamerutils.EEGHeader;
+import eegstreamer.utils.EEGHeader;
 
 public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEGHeader, float[]>> {
 	public String queueName;
