@@ -43,7 +43,7 @@ out_connection = pika.BlockingConnection(params)
 out_channel = out_connection.channel()
 
 
-basicProps = pika.BasicProperties
+basicProps = pika.BasicProperties()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
