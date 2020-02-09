@@ -29,7 +29,7 @@ parser.add_argument("-x", "--exchange",default="eegle",type=str)
 parser.add_argument("-h", "--host",default="10.0.0.5",type=str)
 parser.add_argument("-m", "--user-name", default="producer",type=str)
 parser.add_argument("-p", "--password", default="producer",type=str)
-parser.add_argument("-a", "--source-name", default"one", type=str)
+parser.add_argument("-a", "--source-name", default="one", type=str)
 
 args = parser.parse_args()
 
