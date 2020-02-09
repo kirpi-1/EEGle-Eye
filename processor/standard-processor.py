@@ -42,6 +42,9 @@ in_channel.queue_declare(queue=in_queue,durable = True)
 out_connection = pika.BlockingConnection(params)
 out_channel = out_connection.channel()
 
+
+basicProps = pika.BasicProperties
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -78,6 +81,7 @@ def nparray_callback(ch, method, props, body):
 	
 	out_channel.basic_publish(exchange=args.exchange,
 						routing_key=header['ML_model'],
+						properties=basicProps,
 						body=frame)#properties=props,
 
 in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
