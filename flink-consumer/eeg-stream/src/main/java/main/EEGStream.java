@@ -80,7 +80,7 @@ public class EEGStream{
 		
 		// load properties from config file
 		String RMQ_SERVER = defaultProps.getProperty("RMQ_SERVER","10.0.0.12");
-		String RMQ_VHOST  = defaultProps.getProperty("RMQ_SERVER", "/");
+		String RMQ_VHOST  = defaultProps.getProperty("RMQ_VHOST", "/");
 		int RMQ_PORT      = 5672;
 		try {
 			RMQ_PORT      = Integer.parseInt(defaultProps.getProperty("RMQ_PORT","5672")); 
