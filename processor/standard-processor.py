@@ -74,8 +74,9 @@ def nparray_callback(ch, method, props, body):
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	rkey = "ml"+header['ML_model']
-	out_channel.queue_declare(queue=rkey,durable = True)
-	print("sending to",args.exchange," with routing key:",rkey)
+	out_channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
+	print("sending to",args.exchange,"with routing key:",rkey)
+	
 	out_channel.basic_publish(exchange=args.exchange,
 						routing_key=rkey,
 						body=frame)#properties=props,
