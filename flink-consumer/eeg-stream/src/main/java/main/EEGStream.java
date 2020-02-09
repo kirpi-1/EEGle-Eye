@@ -44,17 +44,17 @@ import org.apache.commons.cli.ParseException;
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		Option configFile = Option.builder("c")
+		Option configOptions = Option.builder("c")
 								.required(false)
 								.longOpt("config-file")
 								.hasArg()
 								.numberOfArgs(1)
 								.desc("use file for config")
 								.build();
-		options.addOption(configFile);
+		options.addOption(configOptions);
 		
 		//create parser
-		CommandLineParser parser = new cli.DefaultParser();
+		CommandLineParser parser = new DefaultParser();
 		CommandLine line;
 		try {
 			line = parser.parse(options, args);
@@ -64,8 +64,8 @@ public class EEGStream{
 		}
 		String configFile = "~/.eeg-stream.conf";
 		
-		if(line.hasOption("configFile")){
-			configFile = line.getOptionValue("configFile");
+		if(line.hasOption("configOptions")){
+			configFile = line.getOptionValue("configOptions");
 		}
 		Properties defaultProps = new Properties();
 		FileInputStream in = new FileInputStream(configFile);
