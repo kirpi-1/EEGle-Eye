@@ -33,6 +33,7 @@ import eegProcess.EEGProcessWindowFunction;
 import publishOptions.MyRMQSinkPublishOptions;
 
 import eegstreamerutils.EEGHeader;
+import eegstreamerutils.RMQEEGSource;
 import mykeyselector.UserKeySelector;
 
 import org.apache.commons.cli.Option;
@@ -124,12 +125,14 @@ public class EEGStream{
 			.build();
 
 		DataStream<Tuple3<Integer, EEGHeader, float[]>> stream = env.addSource(
-			new RMQSource<Tuple3<Integer, EEGHeader, float[]>>(
-				connectionConfig,
-				"eeg",	//name of rabbitmq queue
-				true,		//use correlation ids; can be false if only at-least-once is required
-				new EEGDeserializationSchema())
+			new RMQEEGSource(
+					connectionConfig,
+					RMQ_SOURCE_QUEUE,	//name of rabbitmq queue
+					false,		//use correlation ids; can be false if only at-least-once is required
+					new EEGDeserializationSchema())
+					.setMessageTTL(10000)
 			).setParallelism(1); //non-parallel source is only required for exactly-once
+			
 
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new UserKeySelector())
