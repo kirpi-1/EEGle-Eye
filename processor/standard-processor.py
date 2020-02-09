@@ -39,8 +39,6 @@ connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=in_queue,durable = True, passive=True)
 
-basicProps = pika.BasicProperties(correlation_id=False)
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -85,7 +83,6 @@ def nparray_callback(ch, method, props, body):
 		
 	channel.basic_publish(exchange="main",
 						routing_key="test",
-						properties=basicProps,
 						body=frame,
 						mandatory=True)#properties=props,
 
