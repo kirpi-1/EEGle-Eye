@@ -1,4 +1,4 @@
-package eegconsumer;
+package eegstreamer;
 
 import java.io.IOException;
 import java.io.File;
@@ -27,14 +27,13 @@ import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeW
 import org.apache.flink.streaming.util.serialization.AbstractDeserializationSchema;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 
-import deserializationSchemas.EEGDeserializationSchema;
-import serializationSchemas.EEGSerializer;
-import eegProcess.EEGProcessWindowFunction;
-import publishOptions.MyRMQSinkPublishOptions;
-
-import eegstreamerutils.EEGHeader;
-import eegstreamerutils.RMQEEGSource;
-import mykeyselector.UserKeySelector;
+import eegstreamer.utils.EEGHeader;
+import eegstreamer.utils.RMQEEGSource;
+import eegstreamer.process.EEGProcessWindowFunction;
+import eegstreamer.keyselector.UserKeySelector;
+import eegstreamer.publishoptions.MyRMQSinkPublishOptions;
+import eegstreamer.serialization.EEGDeserializationSchema;
+import eegstreamer.serialization.EEGSerializer;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;

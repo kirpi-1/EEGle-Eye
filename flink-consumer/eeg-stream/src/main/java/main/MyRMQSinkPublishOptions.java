@@ -1,4 +1,4 @@
-package publishOptions;
+package eegstreamer.publishoptions;
 
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSinkPublishOptions;
 import com.rabbitmq.client.AMQP.BasicProperties;

@@ -1,4 +1,4 @@
-package deserializationSchemas;
+package eegstreamer.serialization;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import eegstreamerutils.EEGHeader;
+import eegstreamer.utils.EEGHeader;
 
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, EEGHeader, float[]>> {
 

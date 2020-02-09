@@ -1,9 +1,11 @@
-package eegstreamerutils;
+package eegstreamer.utils;
 
 import java.io.IOException;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
+import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
+import org.apache.flink.api.common.serialization.DeserializationSchema;
 import java.util.Map;
 import java.util.HashMap;
 

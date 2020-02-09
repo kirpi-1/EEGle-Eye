@@ -1,4 +1,4 @@
-package mykeyselector;
+package eegstreamer.keyselector;
 
 import org.apache.flink.api.java.functions.KeySelector;
 
@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import eegstreamerutils.EEGHeader;
+import eegstreamer.utils.EEGHeader;
 
 public class UserKeySelector implements KeySelector<Tuple3<Integer, EEGHeader, float[]>, String>{
 	@Override
