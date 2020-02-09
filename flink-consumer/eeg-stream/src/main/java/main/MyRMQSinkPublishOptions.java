@@ -14,7 +14,7 @@ public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEG
 	}
 	@Override
 	public String computeExchange(Tuple2<EEGHeader, float[]> frame){
-		return "";
+		return "main";
 	}
 	@Override
 	public BasicProperties computeProperties(Tuple2<EEGHeader, float[]> frame){
