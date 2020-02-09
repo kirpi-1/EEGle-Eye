@@ -47,7 +47,7 @@ params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
 									credentials=credentials, \
 									virtual_host=args.vhost)
-connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
+connection = pika.BlockingConnection(params)
 channel = connection.channel()
 
 rmqargs = dict()
