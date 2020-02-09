@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 class RMQEEGSource extends RMQSource<Tuple3<Integer, EEGHeader, float[]>>{	
-	int messageTTL = 60000
+	int messageTTL = 60000;
 	
 	RMQEEGSource setMessageTTL(int newTTL){
 		this.messageTTL = newTTL;
@@ -24,10 +24,4 @@ class RMQEEGSource extends RMQSource<Tuple3<Integer, EEGHeader, float[]>>{
 									false,			//autoDelete
 									args);			//args map
 	}
-	queueDeclare(java.lang.String queue,
-                                  boolean passive,
-                                  boolean durable,
-                                  boolean exclusive,
-                                  boolean autoDelete,
-                                  java.util.Map<java.lang.String,java.lang.Object> arguments)
 }
