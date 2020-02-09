@@ -41,12 +41,13 @@ import org.apache.commons.cli.CommandLineParser;
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		Option configFile = Option.builder()("c")
+		Option configFile = Option.builder("c")
 								.required(false)
 								.longOpt("config-file")
 								.hasArg()
 								.numberOfArgs(1)
-								.desc("use file for config");
+								.desc("use file for config")
+								.build();
 		options.addOption(configFile);
 		
 		//create parser
