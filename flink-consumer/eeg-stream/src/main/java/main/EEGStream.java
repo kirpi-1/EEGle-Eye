@@ -79,12 +79,27 @@ public class EEGStream{
 		try {
 			RMQ_PORT      = Integer.parseInt(defaultProps.getProperty("RMQ_PORT","5672")); 
 		}
-		catch (NumberFormatException fe){
+		catch (NumberFormatException nfe){
 			RMQ_PORT = 5672;
 		}
 		String RMQ_USERNAME= defaultProps.getProperty("RMQ_USERNAME", "consumer");
 		String RMQ_PASSWORD= defaultProps.getProperty("RMQ_PASSWORD", "consuemr");
 		String RMQ_PUBLISH_QUEUE= defaultProps.getProperty("RMQ_PUBLISH_QUEUE","processing");
+		
+		int PROCESSING_WINDOW_LENGTH = 1;
+		try{
+			PROCESSING_WINDOW_LENGTH = Integer.parseInt(defaultProps.getProperty("WINDOW_LENGTH","1"));
+		}
+		catch (NumberFormatException nfe){
+			PROCESSING_WINDOW_LENGTH = 1;
+		}
+		float PROCESSING_WINDOW_OVERLAP = 0.8;
+		try{
+			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","1"));
+		}
+		catch (NumberFormatException nfe){
+			PROCESSING_WINDOW_OVERLAP = 0.8;
+		}
 		
 		
 		
@@ -112,7 +127,8 @@ public class EEGStream{
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new UserKeySelector())
 			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
-			.process(new EEGProcessWindowFunction());
+			.process(new EEGProcessWindowFunction()
+							.setWindowLength();
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
 			.setHost(RMQ_SERVER)

@@ -20,11 +20,11 @@ public class EEGProcessWindowFunction
 	private float windowLengthInSec = 0;
 	private float windowOverlap = 0;
 	
-	public EEGProcessWindowFunction windowLength(float newLength){		
+	public EEGProcessWindowFunction setWindowLength(float newLength){		
 		this.windowLengthInSec = newLength;
 		return this;
 	}
-	public EEGProcessWindowFunction windowOverlap(float newLength){
+	public EEGProcessWindowFunction setWindowOverlap(float newLength){
 		this.windowOverlap = newLength;
 		return this;
 	}
