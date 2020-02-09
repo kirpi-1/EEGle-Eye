@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class EEGProcessWindowFunction
 	extends ProcessWindowFunction<Tuple3<Integer,EEGHeader,float[]>, Tuple2<EEGHeader, float[]>, String, TimeWindow> {
-	final static Logger log = LogManager.getLogger(EEGProcessAllWindowFunction.class.getName());
+	final static Logger log = LogManager.getLogger(EEGProcessWindowFunction.class.getName());
 		
 	private float windowLengthInSec = 0;
 	private float windowOverlap = 0;
