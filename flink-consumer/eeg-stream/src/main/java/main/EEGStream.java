@@ -46,8 +46,7 @@ public class EEGStream{
 								.longOpt("config-file")
 								.hasArg()
 								.numberOfArgs(1)
-								.desc("use file for config")
-								.build();
+								.desc("use file for config");
 		options.addOption(configFile);
 		
 		//create parser
