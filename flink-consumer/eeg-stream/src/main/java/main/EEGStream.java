@@ -59,7 +59,10 @@ public class EEGStream{
 		CommandLineParser parser = new DefaultParser();		
 		try {			
 			CommandLine line = parser.parse(options, args);
+			System.out.println("here")
+			System.out.println(line.hasOption)
 			if(line.hasOption("config-file")){
+				System.out.println(line.getOptionValue("config-file");)
 				configFile = line.getOptionValue("config-file");
 			}
 		}
