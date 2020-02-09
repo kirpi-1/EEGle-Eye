@@ -84,7 +84,7 @@ def nparray_callback(ch, method, props, body):
 	print("sending to",args.exchange,"with routing key:",header['ML_model'])
 		
 	channel.basic_publish(exchange="main",
-						routing_key="ml.default",
+						routing_key="test",
 						properties=basicProps,
 						body=frame,
 						mandatory=True)#properties=props,
