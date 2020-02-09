@@ -45,7 +45,7 @@ import org.apache.commons.cli.ParseException;
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		Option configOptions = Option.builder("c")
+		Option configOptions = Option.builder("-c")
 								.required(false)
 								.longOpt("config-file")
 								.hasArg()
