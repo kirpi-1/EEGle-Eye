@@ -72,7 +72,7 @@ def nparray_callback(ch, method, props, body):
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
-	rkey = "ml."+header['ML_model']
+	rkey = "ml"+header['ML_model']
 	#out_channel.queue_declare(queue=rkey,passive=True, durable = True)
 	print("sending with routing key:",rkey)
 	out_channel.basic_publish(exchange=rmqExchange,
