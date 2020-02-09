@@ -39,7 +39,7 @@ connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=in_queue,durable = True, passive=True)
 
-basicProps = pika.BasicProperties()
+basicProps = pika.BasicProperties(correlation_id=False)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
