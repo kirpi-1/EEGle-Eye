@@ -53,20 +53,20 @@ public class EEGStream{
 								.build();
 		options.addOption(configOptions);
 		
+		String configFile = "~/.eeg-stream.conf";
+		
 		//create parser
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line = new CommandLine();
+		CommandLineParser parser = new DefaultParser();		
 		try {
-			line = parser.parse(options, args);
+			CommandLine line = parser.parse(options, args);
+			if(line.hasOption("configOptions")){
+				configFile = line.getOptionValue("configOptions");
+			}
 		}
 		catch(ParseException exp){
 			System.err.println("parsing failed. Reason: " + exp.getMessage());
 		}
-		String configFile = "~/.eeg-stream.conf";
 		
-		if(line.hasOption("configOptions")){
-			configFile = line.getOptionValue("configOptions");
-		}
 		Properties defaultProps = new Properties();
 		FileInputStream in = new FileInputStream(configFile);
 		defaultProps.load(in);
