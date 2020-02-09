@@ -81,10 +81,11 @@ while(True):
 	t = np.arange(startTime,startTime+args.sample_time,1/args.sampling_rate,dtype=np.float32)
 	signal = np.zeros((len(t),args.num_chan+1))
 	signal[:,0] = t
-	channelNames = list('time');
+	channelNames = list();
+	channelNames.append(['time']);
 	for c in np.arange(args.num_chan):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
-		channelNames.append(str(c))
+		channelNames.append([str(c)])
 		
 	header = makeHeader(userName,frameNumber, startTime,channelNames,\
 		 numSamples=args.sampling_rate,numChannels=signal.shape[1])
