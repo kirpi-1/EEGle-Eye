@@ -41,7 +41,8 @@ import org.apache.commons.cli.CommandLineParser;
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		Option configFile = Option.Builder.("c")
+		Option configFile = Option.Builder()
+								.("c")
 								.required(false)
 								.longOpt("configFile")
 								.hasArg()
