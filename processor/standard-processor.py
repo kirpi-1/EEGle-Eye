@@ -39,7 +39,7 @@ in_channel = in_connection.channel()
 in_channel.queue_declare(queue=in_queue,durable = True)
 
 
-out_connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
+out_connection = pika.BlockingConnection(params)
 out_channel = out_connection.channel()
 
 logging.basicConfig(level=logging.INFO)
