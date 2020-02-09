@@ -86,7 +86,7 @@ while(True):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
 		
-	header = makeHeader(userName,frameNumber, startTime,channelName,\
+	header = makeHeader(userName,frameNumber, startTime,channelNames,\
 		 numSamples=args.sampling_rate,numChannels=signal.shape[1])
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
