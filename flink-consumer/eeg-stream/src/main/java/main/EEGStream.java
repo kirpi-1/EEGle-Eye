@@ -94,12 +94,12 @@ public class EEGStream{
 		catch (NumberFormatException nfe){
 			PROCESSING_WINDOW_LENGTH = 1;
 		}
-		float PROCESSING_WINDOW_OVERLAP = 0.8;
+		float PROCESSING_WINDOW_OVERLAP = 0.8f;
 		try{
 			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","1"));
 		}
 		catch (NumberFormatException nfe){
-			PROCESSING_WINDOW_OVERLAP = 0.8;
+			PROCESSING_WINDOW_OVERLAP = 0.8f;
 		}
 		
 		

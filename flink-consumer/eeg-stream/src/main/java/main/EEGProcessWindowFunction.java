@@ -84,8 +84,8 @@ public class EEGProcessWindowFunction
 		int startIdx=lastIdx;		
 		int numChannels = header.num_channels; // need number of channels for proper spacing		
 		int chunkNum=0;
-		int windowLength = windowLengthInSec*header.sampling_rate;
-		int strideLength = (1-windowOverlap)*windowLengthInSec*header.sampling_rate;
+		int windowLength = (int)(windowLengthInSec*header.sampling_rate);
+		int strideLength = (int)((1-windowOverlap)*windowLengthInSec*header.sampling_rate);
 		while(startIdx + windowLength*numChannels < data.length){
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+windowLength*numChannels);
 			out.collect(new Tuple2(header,tmp));
