@@ -11,8 +11,7 @@ import java.util.HashMap;
 
 import eegstreamer.utils.EEGHeader;
 
-public class RMQEEGSource<OUT> extends RMQSource<OUT>{	
-	int messageTTL = 60000;
+public class RMQEEGSource<OUT> extends RMQSource<OUT>{		
 	
 	public RMQEEGSource(RMQConnectionConfig rmqConnectionConfig,
 						String queueName,
@@ -20,13 +19,16 @@ public class RMQEEGSource<OUT> extends RMQSource<OUT>{
 						DeserializationSchema<OUT> deserializationSchema){
 		super(rmqConnectionConfig, queueName, usesCorrelationID, deserializationSchema);
 	}
+	
+	int messageTTL = 60000;
+	
 	public RMQEEGSource setMessageTTL(int newTTL){
 		this.messageTTL = newTTL;
 		return this;
 	}
 	
 	@Override
-	void setupQueue() throws IOException{
+	protected void setupQueue() throws IOException{
 		Map args = new HashMap();
 		args.put("x-message-ttl", messageTTL);
 		this.channel.queueDeclare(this.queueName, 	//queue
