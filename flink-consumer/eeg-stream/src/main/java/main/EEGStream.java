@@ -1,6 +1,7 @@
 package eegconsumer;
 
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -33,11 +34,12 @@ import publishOptions.MyRMQSinkPublishOptions;
 import eegstreamerutils.EEGHeader;
 import mykeyselector.UserKeySelector;
 
-import org.apache.commons.cli;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.ParseException;
 
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
