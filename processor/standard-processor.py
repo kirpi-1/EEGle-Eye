@@ -74,7 +74,7 @@ def nparray_callback(ch, method, props, body):
 	frame = packHeaderAndData(header,data)
 	rkey = "ml"+header['ML_model']
 	#out_channel.queue_declare(queue=rkey,passive=True, durable = True)
-	print("sending with routing key:",rkey)
+	print("sending to,",rmqExchange," with routing key:",rkey)
 	out_channel.basic_publish(exchange=rmqExchange,
 						routing_key=rkey,
 						body=frame)#properties=props,
