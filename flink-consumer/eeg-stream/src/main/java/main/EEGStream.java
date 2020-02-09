@@ -53,14 +53,14 @@ public class EEGStream{
 								.build();
 		options.addOption(configOptions);
 		
-		String configFile = "~/.eeg-stream.conf";
+		String configFile = "~/eeg-stream.conf";
 		
 		//create parser
 		CommandLineParser parser = new DefaultParser();		
 		try {			
 			CommandLine line = parser.parse(options, args);
 			if(line.hasOption("config-file")){
-				configFile = line.getOptionValue("configOptions");
+				configFile = line.getOptionValue("config-file");
 			}
 		}
 		catch(ParseException exp){
