@@ -59,22 +59,43 @@ public class EEGStream{
 		catch(ParseException exp){
 			System.err.println("parsing failed. Reason: " + exp.getMessage());
 		}
-		String configFile = "~/.eeg-stream.conf"
+		String configFile = "~/.eeg-stream.conf";
 		
 		if(line.hasOption("configFile")){
 			configFile = line.getOptionValue("configFile");
 		}
-		Properties defaultProps = new Properties()
+		Properties defaultProps = new Properties();
+		FileInputStream in = new FileInputStream(configFile);
+		defaultProps.load(in);
+		in.close();
+		
+		// load properties from config file
+		String RMQ_SERVER = defaultProps.getProperty("RMQ_SERVER","10.0.0.12");
+		String RMQ_VHOST  = defaultProps.getProperty("RMQ_SERVER", "/");
+		int RMQ_PORT      = 5672;
+		try {
+			RMQ_PORT      = Integer.parseInt(defaultProps.getProperty("RMQ_PORT","5672")); 
+		}
+		catch (NumberFormatException fe){
+			RMQ_PORT = 5672;
+		}
+		String RMQ_USERNAME= defaultProps.getProperty("RMQ_USERNAME", "consumer");
+		String RMQ_PASSWORD= defaultProps.getProperty("RMQ_PASSWORD", "consuemr");
+		String RMQ_PUBLISH_QUEUE= defaultProps.getProperty("RMQ_PUBLISH_QUEUE","processing");
+		
+		
+		
+		// start flink stream
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// required for exactly-once or at-least-once guarantees
 		//env.enableCheckpointing();
 
 		RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
-			.setHost("10.0.0.12")
-			.setPort(5672)
-			.setUserName("consumer")
-			.setPassword("consumer")
-			.setVirtualHost("/")
+			.setHost(RMQ_SERVER)
+			.setPort(RMQ_PORT)
+			.setUserName(RMQ_USERNAME)
+			.setPassword(RMQ_PASSWORD)
+			.setVirtualHost(RMQ_VHOST)
 			.build();
 
 		DataStream<Tuple3<Integer, EEGHeader, float[]>> stream = env.addSource(
@@ -91,17 +112,18 @@ public class EEGStream{
 			.process(new EEGProcessWindowFunction());
 
 		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
-			.setHost("10.0.0.12")
-			.setPort(5672)
-			.setUserName("producer")
-			.setPassword("producer")
-			.setVirtualHost("/")
+			.setHost(RMQ_SERVER)
+			.setPort(RMQ_PORT)
+			.setUserName(RMQ_USERNAME)
+			.setPassword(RMQ_PASSWORD)
+			.setVirtualHost(RMQ_VHOST)
 			.build();
 		
 		tmpout.addSink(new RMQSink<Tuple2<EEGHeader, float[]>>(
-			sinkConfig, 
+			connectionConfig, 
 			new EEGSerializer(),
-			new MyRMQSinkPublishOptions())
+			new MyRMQSinkPublishOptions()
+					.setQueueName(RMQ_PUBLISH_QUEUE))
 		);
 
 		//stream.print();

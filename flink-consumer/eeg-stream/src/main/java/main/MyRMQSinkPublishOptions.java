@@ -7,6 +7,10 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import eegstreamerutils.EEGHeader;
 
 public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEGHeader, float[]>> {
+	public String queueName;
+	public void setQueueName(String newName){
+		queueName = newName;
+	}
 	@Override
 	public String computeExchange(Tuple2<EEGHeader, float[]> frame){
 		return "";
@@ -19,7 +23,7 @@ public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEG
 	}
 	@Override
 	public String computeRoutingKey(Tuple2<EEGHeader, float[]> frame){
-		return "processing";
+		return queueName;
 	}
 	
 }
