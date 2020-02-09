@@ -75,10 +75,9 @@ while(True):
 	signal[:,0] = t
 	for c in np.arange(args.num_chan):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq);
-	data = signal #np.vstack([t,signal]).transpose()
 	header = makeHeader(userName,frameNumber, startTime,['time','Fpz'],\
-		 numSamples=args.sampling_rate,numChannels=args.num_chan)
-	frame = packHeaderAndData(header,data)
+		 numSamples=args.sampling_rate,numChannels=signal.shape[1])
+	frame = packHeaderAndData(header,signal)
 	headerSize = int.from_bytes(frame[0:3],byteorder='little')	
 	print(header)
 	#vis.line(win=linwin,Y=signal[0,:])	
