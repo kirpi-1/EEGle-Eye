@@ -5,6 +5,8 @@ import sys, signal
 sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
+import RMQUtils
+
 from scipy.signal import butter, lfilter, freqz
 import logging
 
@@ -14,24 +16,30 @@ def signal_handler(signal, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
+parser = RMQUtils.getParser()
+args = parser.parse_args()
+
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = np.array([59, 61])
 
 # connection settings
-credentials = pika.PlainCredentials("processor","processor")
+credentials = pika.PlainCredentials(args.user_name,args.password)
 
-#rmquser = os.environ['RABBITMQ_USERNAME']
-#rmqpass = os.environ['RABBITMQ_PASSWORD']
 in_queue = "processing"
-args = dict()
-args['message-ttl']=10000
-
-in_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+rmqIP = args.host
+rmqExchange = args.exchange
+rmqargs = dict()
+rmqargs['x-message-ttl']=10000
+params = pika.ConnectionParameters(	host=rmqIP, \
+									port=args.port,\
+									credentials=credentials, \
+									virtual_host=args.vhost)
+in_connection = pika.BlockingConnection(params)
 in_channel = in_connection.channel()
-in_channel.queue_declare(queue=in_queue,arguments=args,durable = True)
+in_channel.queue_declare(queue=in_queue,arguments=rmqargs,durable = True)
 
 
-out_connection = pika.BlockingConnection(pika.ConnectionParameters('10.0.0.12',credentials=credentials))
+out_connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
 out_channel = out_connection.channel()
 
 logging.basicConfig(level=logging.INFO)
@@ -48,11 +56,9 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	y = lfilter(b, a, data, axis=0)
 	return y
 
-
-
 def nparray_callback(ch, method, props, body):
 	out = list();
-	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, out_queue, args
+	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, rmqargs
 	header, data = unpackHeaderAndData(body)
 	#get channel number for time/TIME
 	timeChan, eeg = splitTimeAndEEG(header, data)
@@ -68,7 +74,7 @@ def nparray_callback(ch, method, props, body):
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	out_channel.queue_declare(queue=header['ML_model'],arguments=args,durable = True)
-	out_channel.basic_publish(exchange='',
+	out_channel.basic_publish(exchange=rmqExchange,
 						routing_key=header['ML_model'],
 						body=frame)#properties=props,
 
