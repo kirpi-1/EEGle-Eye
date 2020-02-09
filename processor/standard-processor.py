@@ -36,7 +36,7 @@ params = pika.ConnectionParameters(	host=rmqIP, \
 									virtual_host=args.vhost)
 in_connection = pika.BlockingConnection(params)
 in_channel = in_connection.channel()
-in_channel.queue_declare(queue=in_queue,arguments=rmqargs,durable = True)
+in_channel.queue_declare(queue=in_queue,durable = True)
 
 
 out_connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
