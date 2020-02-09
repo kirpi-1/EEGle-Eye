@@ -27,16 +27,19 @@ parser.add_argument("-z", "--sample-time",default=1.0, type=float)
 parser.add_argument("-q", "--queue-name",default="eeg",type=str)
 parser.add_argument("-x", "--exchange",default="eegle",type=str)
 parser.add_argument("-h", "--host",default="10.0.0.5",type=str)
+parser.add_argument("-m", "--user-name", default="producer",type=str)
+parser.add_argument("-p", "--password", default="producer",type=str)
+parser.add_argument("-a", "--source-name", default"one", type=str)
 
 args = parser.parse_args()
 
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
-credentials = pika.PlainCredentials("producer","producer")
-rmqIP = '10.0.0.12'
-userName = "one"
-routing_key="eeg"
+credentials = pika.PlainCredentials(args.user_name,args.password)
+rmqIP = args.host
+userName = args.source_name
+routing_key=args.queue_name
 corr_id = str(uuid.uuid4())
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
@@ -45,14 +48,14 @@ channel = connection.channel()
 rmqargs = dict()
 rmqargs['message-ttl']=10000
 channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
-props = pika.BasicProperties(correlation_id=corr_id)
+#props = pika.BasicProperties(correlation_id=corr_id)
 
 startTime = 0;
 freqs = [1,4,11,22,35,80];
 fullCycle=10
 print("Sending messages. CTRL+C to quit.")
-plotTime = np.zeros((250*4))
-plotSignal = np.zeros((250*4))
+plotTime = np.zeros((args.sampling_rate*4))
+plotSignal = np.zeros((args.sampling_rate*4))
 
 #vis = visdom.Visdom()
 #linwin = visdom.line([0])
@@ -84,10 +87,11 @@ while(True):
 	#print("frame length is:", len(frame))
 	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	
-	channel.basic_publish(exchange='',
+	channel.basic_publish(exchange=args.exchange,
 						routing_key=routing_key,
-						properties=props,
 						body=frame)
+						#properties=props,
+
 	startTime = startTime+1
 	frameNumber = frameNumber + 1
 	time.sleep(args.sample_time)
