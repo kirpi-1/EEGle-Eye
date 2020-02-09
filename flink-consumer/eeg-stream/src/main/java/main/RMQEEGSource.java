@@ -12,7 +12,7 @@ import java.util.HashMap;
 import eegstreamer.utils.EEGHeader;
 
 public class RMQEEGSource<OUT> extends RMQSource<OUT>{		
-	
+	// override class for passive declaration of source queue (don't create it if doesn't exist)
 	public RMQEEGSource(RMQConnectionConfig rmqConnectionConfig,
 						String queueName,
 						boolean usesCorrelationID,
@@ -31,11 +31,14 @@ public class RMQEEGSource<OUT> extends RMQSource<OUT>{
 	protected void setupQueue() throws IOException{
 		Map args = new HashMap();
 		args.put("x-message-ttl", messageTTL);
-		this.channel.queueDeclare(this.queueName, 	//queue
-									true,			//passive
-									true,			//durable
-									false,			//exclusive
-									false,			//autoDelete
-									args);			//args map
+		this.channel.queueDeclarePassive(this.queueName);
+									
 	}
 }
+
+java.lang.String queue, 
+boolean passive, 
+boolean durable,
+ boolean exclusive, 
+ boolean autoDelete, 
+ java.util.Map<java.lang.String,java.lang.Object> arguments)
