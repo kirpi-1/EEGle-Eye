@@ -17,6 +17,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 parser = RMQUtils.getParser()
+parser.set_defaults(user_name='processor', password='processor')
 parser.add_argument("-i","--input-queue",default="processing")
 args = parser.parse_args()
 
