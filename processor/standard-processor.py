@@ -79,6 +79,6 @@ def nparray_callback(ch, method, props, body):
 						mandatory=True)#properties=props,
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
-print(' [*] Connected to:\n\t{}\n\t{}\n [*] 	as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(args.port)]),":".join([args.vhost,args.exchange,in_queue]), args.user_name))
+print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(args.port)]),":".join([args.vhost,args.exchange,in_queue]), args.user_name))
 
 channel.start_consuming()
