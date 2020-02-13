@@ -17,5 +17,5 @@ def getParser():
 	parser.add_argument("-v", "--vhost",default="eegle",type=str)
 	parser.add_argument("-m", "--user-name", default="producer",type=str)
 	parser.add_argument("-p", "--password", default="producer",type=str)
-	parser.add_argument("-a", "--source-name", default="one", type=str)
+	parser.add_argument("-a", "--session-id", default="one", type=str)
 	return parser;

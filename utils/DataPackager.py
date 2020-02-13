@@ -32,15 +32,20 @@ def unpackHeaderAndData(message):
 	return header, data	
 
 def makeHeader(userName, frameNumber, timeStamp, channelNames, \
-		numSamples,	numChannels, mlModel='default', sampling_rate=250):
+		numSamples,	numChannels, sessionID='', mlModel='default',\
+		preprocessing="standard", sampling_rate=250):
 	#frame number	
 	#sampling rate
 	#number of channels
+	if sessionID=='':
+		sessionID = userName;
 	h = dict()
-	h['user_name']=userName	
+	h['user_name']=userName
+	h['session_id']=sessionID
 	h['frame_number']=frameNumber
 	h['time_stamp']=timeStamp
 	h['ML_model']=mlModel
+	h['preprocessing']=preprocessing
 	h['sampling_rate']=sampling_rate
 	h['num_samples'] = numSamples
 	h['num_channels'] = numChannels

@@ -59,7 +59,7 @@ public class EEGStream{
 		
 		//create parser
 		CommandLineParser parser = new DefaultParser();		
-		try {			
+		try {
 			CommandLine line = parser.parse(options, args);
 			for(int i=0;i<args.length;i++)
 				System.out.println(args[i]);
