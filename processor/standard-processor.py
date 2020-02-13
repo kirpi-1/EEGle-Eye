@@ -17,33 +17,38 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 parser = RMQUtils.getParser()
+parser.add_argument("-i","--input-queue",default="processing")
 args = parser.parse_args()
 
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = np.array([59, 61])
 
 # connection settings
-credentials = pika.PlainCredentials(args.user_name,args.password)
-
-in_queue = "processing"
+cred = pika.PlainCredentials(args.user_name,args.password)
 rmqIP = args.host
 rmqExchange = args.exchange
-rmqargs = dict()
-rmqargs['x-message-ttl']=10000
+routing_key=args.queue_name
+in_queue = args.input_queue
+
+
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.port,\
-									credentials=credentials, \
+									credentials=cred, \
 									virtual_host=args.vhost)
-in_connection = pika.BlockingConnection(params)
-in_channel = in_connection.channel()
-in_channel.queue_declare(queue=in_queue,durable = True)
-
-
-out_connection = pika.BlockingConnection(params)
-out_channel = out_connection.channel()
+connection = pika.BlockingConnection(params)
+channel = connection.channel()
+channel.queue_declare(queue=in_queue,durable = True, passive=True)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+print("ip",rmqIP)
+print("port",args.port)
+print("credentials",cred)
+print("virtual_host",args.vhost)
+print("in_queue",in_queue)
+
 
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
@@ -58,7 +63,7 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 
 def nparray_callback(ch, method, props, body):
 	out = list();
-	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, rmqargs
+	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF
 	header, data = unpackHeaderAndData(body)
 	#get channel number for time/TIME
 	timeChan, eeg = splitTimeAndEEG(header, data)
@@ -73,13 +78,14 @@ def nparray_callback(ch, method, props, body):
 	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
-	out_channel.queue_declare(queue=header['ML_model'],durable = True)
-	out_channel.basic_publish(exchange=rmqExchange,
-						routing_key=header['ML_model'],
-						body=frame)#properties=props,
+	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
+	channel.basic_publish(exchange=args.exchange,
+						routing_key="ml."+header['ML_model'],
+						body=frame,
+						mandatory=True)#properties=props,
 
-in_channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
+channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
-in_channel.start_consuming()
+channel.start_consuming()

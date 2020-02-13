@@ -1,7 +1,0 @@
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/StreamingJob.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/ArrayStream.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/MyDeserializationSchema.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/RMQIntSerializer.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/MyProcessAllWindowFunction.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/Tuple2DeserializationSchema.java
-/home/ubuntu/code/server/array-stream/src/main/java/arraystream/BatchJob.java

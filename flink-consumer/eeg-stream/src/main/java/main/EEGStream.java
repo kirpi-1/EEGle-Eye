@@ -129,8 +129,8 @@ public class EEGStream{
 					connectionConfig,
 					RMQ_SOURCE_QUEUE,	//name of rabbitmq queue
 					false,		//use correlation ids; can be false if only at-least-once is required
-					new EEGDeserializationSchema())
-					.setMessageTTL(10000)
+					new EEGDeserializationSchema()
+					)
 			).setParallelism(1); //non-parallel source is only required for exactly-once
 			
 

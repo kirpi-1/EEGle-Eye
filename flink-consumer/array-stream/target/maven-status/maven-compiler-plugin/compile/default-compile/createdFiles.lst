@@ -1,7 +1,0 @@
-arraystream/BatchJob.class
-arraystream/StreamingJob.class
-arraystream/ArrayStream.class
-deserializationSchemas/Tuple2DeserializationSchema.class
-myprocessallwindowfunction/MyProcessAllWindowFunction.class
-serializationSchemas/RMQIntSerializer.class
-deserializationSchemas/MyDeserializationSchema.class
