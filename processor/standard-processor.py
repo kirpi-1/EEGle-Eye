@@ -44,13 +44,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-print("ip",rmqIP)
-print("port",args.port)
-print("credentials",cred)
-print("virtual_host",args.vhost)
-print("in_queue",in_queue)
-
-
 def create_butterworth(cutoff, fs, order=5,type='lowpass'):
 	nyq = 0.5 * fs
 	normal_cutoff = cutoff / nyq
@@ -86,7 +79,6 @@ def nparray_callback(ch, method, props, body):
 						mandatory=True)#properties=props,
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
-
-print(' [*] Waiting for messages from \"{}\" as \"{}\" To exit press CTRL+C'.format(in_queue, args.user_name))
+print(' [*] Connected to:\n\t{}\n{}\nas {}. Waiting for messages. To exit press CTRL+C'.format("".join([rmqIP,args.port],":"),"".join([args.vhost,args.exchange,in_queue],":"), args.user_name))
 
 channel.start_consuming()
