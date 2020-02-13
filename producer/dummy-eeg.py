@@ -27,7 +27,7 @@ args = parser.parse_args()
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
 cred = pika.PlainCredentials(args.user_name,args.password)
 rmqIP = args.host
-userName = args.user_name;
+userName = args.user_name
 sessionID = args.user_name+"_test"#str(uuid.uuid4())
 routing_key=args.queue_name
 #corr_id = str(uuid.uuid4())
@@ -79,9 +79,10 @@ while(True):
 						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
 						numChannels=signal.shape[1])
+	print(header)
+
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
-	print(header)
 	#vis.line(win=linwin,Y=signal[0,:])	
 	#print("frame length is:", len(frame))
 	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
