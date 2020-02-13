@@ -12,7 +12,7 @@ def packHeaderAndData(header, data):
 #	j = j.replace("}","]")	
 	headerSize = len(j)
 	fmt = "<i"+str(headerSize) + "s" + str(header['num_channels']*header['num_samples']) + "f"
-	print(fmt)
+	#print(fmt)
 	o = struct.pack(fmt,headerSize,j.encode('utf-8'),*data.flatten())
 	return o
 	
@@ -41,16 +41,16 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	if sessionID=='':
 		sessionID = userName;
 	h = dict()
-	h['user_name']=userName
-	h['session_id']=sessionID
-	h['frame_number']=frameNumber
-	h['time_stamp']=timeStamp
-	h['ML_model']=mlModel
-	h['preprocessing']=preprocessing
-	h['sampling_rate']=sampling_rate
-	h['num_samples'] = numSamples
-	h['num_channels'] = numChannels
-	h['channel_names']=channelNames
+	h['user_name']=str(userName)
+	h['session_id']=str(sessionID)
+	h['frame_number']=int(frameNumber)
+	h['time_stamp']=int(timeStamp)
+	h['ML_model']=str(mlModel)
+	h['preprocessing']=str(preprocessing)
+	h['sampling_rate']=int(sampling_rate)
+	h['num_samples'] = int(numSamples)
+	h['num_channels'] = int(numChannels)
+	h['channel_names']=int(channelNames)
 	
 	return h
 
