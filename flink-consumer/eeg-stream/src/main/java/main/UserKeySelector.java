@@ -18,6 +18,6 @@ import eegstreamer.utils.EEGHeader;
 public class UserKeySelector implements KeySelector<Tuple3<Integer, EEGHeader, float[]>, String>{
 	@Override
 	public String getKey(Tuple3<Integer, EEGHeader, float []> frame){
-		return frame.f1.user_name;
+		return frame.f1.session_id;
 	}
 }
