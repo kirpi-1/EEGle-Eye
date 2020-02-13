@@ -62,7 +62,7 @@ credentials = pika.PlainCredentials("consumer","consumer")
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
-queue = "default"
+queue = "ml.default"
 args = dict()
 args['message-ttl']=10000
 connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
