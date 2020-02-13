@@ -87,6 +87,6 @@ def nparray_callback(ch, method, props, body):
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 
-print(' [*] Waiting for messages. To exit press CTRL+C')
+print(' [*] Waiting for messages from \"{}\" as \"{}\" To exit press CTRL+C'.format(in_queue, args.user_name))
 
 channel.start_consuming()
