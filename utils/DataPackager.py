@@ -12,6 +12,7 @@ def packHeaderAndData(header, data):
 #	j = j.replace("}","]")	
 	headerSize = len(j)
 	fmt = "<i"+str(headerSize) + "s" + str(header['num_channels']*header['num_samples']) + "f"
+	print(fmt)
 	o = struct.pack(fmt,headerSize,j.encode('utf-8'),*data.flatten())
 	return o
 	
