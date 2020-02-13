@@ -50,7 +50,9 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	h['sampling_rate']=int(sampling_rate)
 	h['num_samples'] = int(numSamples)
 	h['num_channels'] = int(numChannels)
-	h['channel_names']=int(channelNames)
+	if not type(channelNames) is list:
+		raise TypeError("channel names must be a list")
+	h['channel_names']=channelNames
 	
 	return h
 
