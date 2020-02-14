@@ -49,9 +49,11 @@ def nparray_callback(ch, method, props, body):
 	preprocessing = header['preprocessing']
 	mlModel = header['ML_model']
 	_class = classifyData(header, data)
-	cur.execute("INSERT INTO sessions (sess_id, user, ml_model, preprocessing) VALUES (%s, %s, %s, %s)", (sessionID, userName,mlModel, preprocessing))
+	cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
+				(sessionID, userName, mlModel, preprocessing))
 	now = datetime.utcnow()
-	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)", (sessionID, now, timestamp, _class))	
+	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
+				(sessionID, now, timestamp, _class))	
 	cur.commit();
 
 conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
