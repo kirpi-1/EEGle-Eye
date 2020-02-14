@@ -57,8 +57,10 @@ conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
 
 
 credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
-params = pika.ConnectionParameters(args.RMQhost, credentials=credentials)
-
+\params = pika.ConnectionParameters(	host=rmqIP, \
+									port=args.RMQport,\
+									credentials=cred, \
+									virtual_host=args.RMQvhost)
 RMQargs = dict()
 RMQargs['message-ttl']=10000
 connection = pika.BlockingConnection(params)
