@@ -15,14 +15,16 @@ import argparse
 parser = argparse.ArgumentParser();
 parser.add_argument("-h", "--RMQhost",default="10.0.0.14",type=str)
 parser.add_argument("-p", "--RMQport",default=5672,type=int)
+parser.add_argument("-u", "--RMQuser",default="default_model",type=str)
+parser.add_argument("-v", "--RMQpassword",default="default_model"
 parser.add_argument("-i", "--SQLhost",default="10.0.0.10",type=str)
-parser.add_argument("-q", "--SQLport",default=
+#parser.add_argument("-q", "--SQLport",default=
+parser.add_argument("-w", "--SQLuser",default="mldefault")
+parser.add_argument("-x", "--SQLpassword",default="mldefault")
+parser.add_argument("-m", "--MLmodel",default="default")
 args = parser.parse_args()
-rmqIP = args.host
-
+queue = "ml." + args.MLmodel
 startTime=0;
-
-rmqIP = '54.201.180.173'
 
 
 
@@ -55,17 +57,15 @@ def nparray_callback(ch, method, props, body):
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)", (sessionID, now, timestamp, _class))	
 	cur.commit();
 
-conn = psycopg2.connect(dbname="results", user="defaultclassifier", password="mldefault",host="10.0.0.10")
+conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
+		password=args.SQLpassword,host=args.SQLhost)
 
 
-credentials = pika.PlainCredentials("consumer","consumer")
+credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
 
-#rmquser = os.environ['RABBITMQ_USERNAME']
-#rmqpass = os.environ['RABBITMQ_PASSWORD']
-queue = "ml.default"
 args = dict()
 args['message-ttl']=10000
-connection = pika.BlockingConnection(pika.ConnectionParameters(rmqIP,credentials=credentials))
+connection = pika.BlockingConnection(pika.ConnectionParameters(args.RMQhost,credentials=credentials))
 channel = connection.channel()
 channel.queue_declare(queue=queue,arguments=args,durable = True)
 
