@@ -40,6 +40,7 @@ def nparray_callback(ch, method, props, body):
 	global power;
 	out = list();
 	header, data = unpackHeaderAndData(body)
+	print(header)
 	timeChan, eeg = splitTimeAndEEG(header, data)
 	userName = header['user_name']
 	sessionID = header['session_id']
