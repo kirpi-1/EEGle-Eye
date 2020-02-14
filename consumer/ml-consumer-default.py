@@ -50,7 +50,7 @@ def nparray_callback(ch, method, props, body):
 	preprocessing = header['preprocessing']
 	mlModel = header['ML_model']
 	_class = classifyData(header, data)
-	
+	print("classified as", _class)
 	# check if this session has already been recorded in local list
 	if not sessionID in sessionList:
 		sessionList.append(sessionID)
