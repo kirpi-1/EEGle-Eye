@@ -17,7 +17,7 @@ parser.set_defaults(RMQuser='default_model', RMQpassword='default_model')
 parser.add_argument("-i", "--SQLhost",default="10.0.0.10",type=str)
 #parser.add_argument("-q", "--SQLport",default=
 parser.add_argument("-w", "--SQLuser",default="mldefault")
-parser.add_argument("-x", "--SQLpassword",default="mldefault")
+parser.add_argument("-y", "--SQLpassword",default="mldefault")
 parser.add_argument("-m", "--MLmodel",default="default")
 args = parser.parse_args()
 queue = "ml." + args.MLmodel
