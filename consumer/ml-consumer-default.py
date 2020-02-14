@@ -23,10 +23,11 @@ parser.add_argument("-w", "--SQLuser",default="mldefault")
 parser.add_argument("-x", "--SQLpassword",default="mldefault")
 parser.add_argument("-m", "--MLmodel",default="default")
 args = parser.parse_args()
+
 queue = "ml." + args.MLmodel
 startTime=0;
 
-
+print(args.RMQhost)
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -65,7 +66,8 @@ credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
 
 args = dict()
 args['message-ttl']=10000
-connection = pika.BlockingConnection(pika.ConnectionParameters(args.RMQhost,credentials=credentials))
+params = pika.ConnnectionParameters(args.RMQhost, credentials=credentials)
+connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=queue,arguments=args,durable = True)
 
