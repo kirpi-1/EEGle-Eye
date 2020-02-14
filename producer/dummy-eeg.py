@@ -68,7 +68,7 @@ frameNumber = 0;
 while(True):
 	t = np.arange(startTime,startTime+args.sample_time,1/args.sampling_rate,dtype=np.float32)
 	signal = np.zeros((len(t),args.num_chan+1))
-	signal[:,0] = t
+	signal[:,0] = t*1000 # miliseconds
 	channelNames = list();
 	channelNames.append('time');
 	for c in np.arange(args.num_chan):
