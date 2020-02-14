@@ -58,7 +58,7 @@ def nparray_callback(ch, method, props, body):
 		select_query = "SELECT sess_id FROM sessions where sess_id='{}'".format(sessionID)
 		cur.execute(select_query)
 		records = cur.fetchall()
-		if isempty(records): 
+		if len(records)==0: 
 			# if it's not recorded, add it to the database
 			cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
 					(sessionID, userName, mlModel, preprocessing))
