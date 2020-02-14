@@ -6,7 +6,7 @@ import struct
 import psycopg2
 sys.path.append('../utils/')
 import time;
-import datetime;
+from datetime import datetime;
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
 import RMQUtils;
