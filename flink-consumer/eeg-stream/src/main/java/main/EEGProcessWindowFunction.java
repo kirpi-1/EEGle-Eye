@@ -3,6 +3,7 @@ package eegstreamer.process;
 import eegstreamer.utils.EEGHeader;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -81,6 +82,15 @@ public class EEGProcessWindowFunction
 		}
 		if(numMsgs==1)
 			frameLen=0;
+		// find which channel is the time channel so I can use it for correct timestamping
+		String timeString = "time";
+		for(String s : header.channel_names){
+			if(s.toLowerCase().equals("time")){
+				timeString = s;
+				break;
+			}
+		}
+		int timeChanIdx = header.channel_names.indexOf(timeString);
 		
 		// create a sliding window along the data and push that to stream out
 		int startIdx=lastIdx;		
@@ -90,6 +100,25 @@ public class EEGProcessWindowFunction
 		int strideLength = (int)((1-windowOverlap)*windowLengthInSec*header.sampling_rate);
 		while(startIdx + windowLength*numChannels < data.length){
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+windowLength*numChannels);
+			// set the time stamp for this window to the value of the first sample in the time series
+			if(timeChanIdx!=-1){ //if there is a time channel
+			// Data is organized as [c0s0, c1s0, c2s0...,c0s1,c1s1,c2s1...]
+			// so the first sample of the time channel is just the idx of the time channel
+				header.time_stamp = tmp[timeChanIdx]; 
+			}			
+			else{ 
+				// if there's no time channel, use the frame number, sampling rate, and 
+				//		number of samples to construct the timestamp
+				
+				// base time = frame number * number of ms in a frame
+				// ms/frame = samples/s  /  samples/frame * 1000 ms/s
+				// num_ms_frame = sampling_rate / num_samples in a frame * 1000
+				int base_time = header.frame_number * (header.sampling_rate/header.num_samples*1000);
+				// ms since start of frame = startIdx/sampling_rate * 1000
+				int cur_time = (startIdx/numChannels)/header.sampling_rate*1000;
+				header.time_stamp = base_time + cur_time;
+			
+			}
 			out.collect(new Tuple2(header,tmp));
 			// multiply by number of channels to move proper number of values forward
 			startIdx = startIdx + strideLength*numChannels;
