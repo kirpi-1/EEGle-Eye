@@ -66,7 +66,7 @@ credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
 
 args = dict()
 args['message-ttl']=10000
-params = pika.ConnnectionParameters(args.RMQhost, credentials=credentials)
+params = pika.ConnectionParameters(args.RMQhost, credentials=credentials)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=queue,arguments=args,durable = True)
