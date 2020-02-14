@@ -98,7 +98,7 @@ public class EEGProcessWindowFunction
 		int chunkNum=0;
 		int windowLength = (int)(windowLengthInSec*header.sampling_rate);
 		int strideLength = (int)((1-windowOverlap)*windowLengthInSec*header.sampling_rate);
-		System.out.println(String.format("%f, %f, %d, %d",1-windowOverlap, windowLengthInSec,header.sampling_rate, windowLengthInSec*header.sampling_rate));
+		System.out.println(String.format("%f, %f, %d, %f",1.0-windowOverlap, windowLengthInSec,header.sampling_rate, windowLengthInSec*header.sampling_rate));
 		while(startIdx + windowLength*numChannels < data.length){
 			System.out.println(String.format("windowLen: %d\tstrideLen: %d\tstartIdx: %d\tendIdx: %d",
 			windowLength, strideLength,startIdx,startIdx+windowLength*numChannels));
