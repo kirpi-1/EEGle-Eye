@@ -11,7 +11,7 @@ import json
 sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData
 import RMQUtils
-from datetime import datetime
+import time
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -28,7 +28,7 @@ args = parser.parse_args()
 cred = pika.PlainCredentials(args.RMQuser,args.RMQpassword)
 rmqIP = args.RMQhost
 userName = args.RMQuser
-sessionID = args.RMQuser+str(datetime.utcnow())#+str(uuid.uuid4())
+sessionID = args.RMQuser+str(int(time.time()-50*356.25*24*60*60))#+str(uuid.uuid4())
 routing_key=args.RMQqueue
 #corr_id = str(uuid.uuid4())
 rmqargs = dict()
