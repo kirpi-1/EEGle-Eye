@@ -27,8 +27,6 @@ args = parser.parse_args()
 queue = "ml." + args.MLmodel
 startTime=0;
 
-print(args.RMQhost)
-print(type(args.RMQhost))
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
 	sys.exit(0)
@@ -63,13 +61,13 @@ conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
 
 
 credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
-
-args = dict()
-args['message-ttl']=10000
 params = pika.ConnectionParameters(args.RMQhost, credentials=credentials)
+
+RMQargs = dict()
+RMQargs['message-ttl']=10000
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
-channel.queue_declare(queue=queue,arguments=args,durable = True)
+channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
 
 channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
 
