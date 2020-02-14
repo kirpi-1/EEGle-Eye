@@ -42,7 +42,7 @@ def nparray_callback(ch, method, props, body):
 	header, data = unpackHeaderAndData(body)
 	timeChan, eeg = splitTimeAndEEG(header, data)
 	userName = header['user_name']
-	sessID = header['session_id']
+	sessionID = header['session_id']
 	timestamp = header['time_stamp']
 	preprocessing = header['preprocessing']
 	mlModel = header['ML_model']
