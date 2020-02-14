@@ -54,7 +54,7 @@ def nparray_callback(ch, method, props, body):
 	now = datetime.utcnow()
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
-	cur.commit();
+	conn.commit();
 
 conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
 		password=args.SQLpassword,host=args.SQLhost)
