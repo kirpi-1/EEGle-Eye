@@ -13,7 +13,7 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 import argparse
 
 parser = argparse.ArgumentParser();
-parser.add_argument("-o", "--RMQhost",default="10.0.0.14",type=str)
+parser.add_argument("-o", "--RMQhost",default="10.0.0.14",type=str,nargs=1)
 parser.add_argument("-p", "--RMQport",default=5672,type=int)
 parser.add_argument("-u", "--RMQuser",default="default_model",type=str)
 parser.add_argument("-v", "--RMQpassword",default="default_model")
@@ -28,7 +28,7 @@ queue = "ml." + args.MLmodel
 startTime=0;
 
 print(args.RMQhost)
-
+print(type(args.RMQhost))
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
 	sys.exit(0)
