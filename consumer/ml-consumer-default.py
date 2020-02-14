@@ -36,8 +36,9 @@ def classifyData(header, data):
 	return _class
 
 def nparray_callback(ch, method, props, body):
-	global startTime;
-	global power;
+	global startTime
+	global conn
+	cur = conn.cursor();
 	out = list();
 	header, data = unpackHeaderAndData(body)
 	print(header)
@@ -55,7 +56,7 @@ def nparray_callback(ch, method, props, body):
 
 conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
 		password=args.SQLpassword,host=args.SQLhost)
-
+cur = conn.cur
 
 credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
 params = pika.ConnectionParameters(host=args.RMQhost,\
