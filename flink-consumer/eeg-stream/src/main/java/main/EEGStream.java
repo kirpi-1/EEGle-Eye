@@ -103,7 +103,7 @@ public class EEGStream{
 		}
 		float PROCESSING_WINDOW_OVERLAP = 0.8f;
 		try{
-			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","1"));
+			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","0.8"));
 		}
 		catch (NumberFormatException nfe){
 			PROCESSING_WINDOW_OVERLAP = 0.8f;

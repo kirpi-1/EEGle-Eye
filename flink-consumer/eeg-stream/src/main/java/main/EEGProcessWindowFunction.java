@@ -99,6 +99,7 @@ public class EEGProcessWindowFunction
 		int windowLength = (int)(windowLengthInSec*header.sampling_rate);
 		int strideLength = (int)((1-windowOverlap)*windowLengthInSec*header.sampling_rate);
 		while(startIdx + windowLength*numChannels < data.length){
+			System.out.println(String.format("start idx: %d",startIdx))
 			float[] tmp = Arrays.copyOfRange(data,startIdx,startIdx+windowLength*numChannels);
 			// set the time stamp for this window to the value of the first sample in the time series
 			if(timeChanIdx!=-1){ //if there is a time channel
