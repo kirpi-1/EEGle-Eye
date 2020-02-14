@@ -104,7 +104,7 @@ public class EEGProcessWindowFunction
 			if(timeChanIdx!=-1){ //if there is a time channel
 			// Data is organized as [c0s0, c1s0, c2s0...,c0s1,c1s1,c2s1...]
 			// so the first sample of the time channel is just the idx of the time channel
-				header.time_stamp = tmp[timeChanIdx]; 
+				header.time_stamp = (int)tmp[timeChanIdx]; 
 			}			
 			else{ 
 				// if there's no time channel, use the frame number, sampling rate, and 
