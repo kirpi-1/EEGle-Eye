@@ -44,6 +44,7 @@ public class EEGSerializer implements SerializationSchema<Tuple2<EEGHeader, floa
 		//System.out.println(frame.f0);
 		// src, src pos, dst, dst pos, length
 		// System.out.println(String.format("should be sending %d, %d bytes total",headerAsBytes.length,result.length));
+		System.out.println(header);
 		System.arraycopy(headerSize,0,result,0,headerSize.length);
 		System.arraycopy(headerAsBytes,0,result,headerSize.length,headerAsBytes.length);
 		System.arraycopy(body,0,result,headerSize.length+headerAsBytes.length,body.length);
