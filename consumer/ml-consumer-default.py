@@ -22,6 +22,7 @@ parser.add_argument("-l", "--MLmodel",default="default")
 args = parser.parse_args()
 queue = "ml." + args.MLmodel
 startTime=0;
+sessionList = list()
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -49,9 +50,20 @@ def nparray_callback(ch, method, props, body):
 	preprocessing = header['preprocessing']
 	mlModel = header['ML_model']
 	_class = classifyData(header, data)
-	cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
-				(sessionID, userName, mlModel, preprocessing))
+	
+	# check if this session has already been recorded in local list
+	if not sessionID in sessionList:
+		sessionList.append(sessionID)
+		# if it hasn't, query the database to see if it knows
+		select_query = "SELECT sess_id FROM sessions where sess_id='{}'".format(sessionID)
+		cur.execute(select_query)
+		records = cur.fetchall()
+		if isempty(records): 
+			# if it's not recorded, add it to the database
+			cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
+					(sessionID, userName, mlModel, preprocessing))
 	now = datetime.utcnow()
+	# insert actual data
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
 	conn.commit();
