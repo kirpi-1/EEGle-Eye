@@ -9,21 +9,17 @@ import time;
 import datetime;
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
-
+import RMQUtils;
 import argparse
 
-parser = argparse.ArgumentParser();
-parser.add_argument("-o", "--RMQhost",default="10.0.0.14",type=str,nargs=1)
-parser.add_argument("-p", "--RMQport",default=5672,type=int)
-parser.add_argument("-u", "--RMQuser",default="default_model",type=str)
-parser.add_argument("-v", "--RMQpassword",default="default_model")
+parser = RMQUtils.getParser();
+parser.set_defaults(RMQuser='default_model', RMQpassword='default_model')
 parser.add_argument("-i", "--SQLhost",default="10.0.0.10",type=str)
 #parser.add_argument("-q", "--SQLport",default=
 parser.add_argument("-w", "--SQLuser",default="mldefault")
 parser.add_argument("-x", "--SQLpassword",default="mldefault")
 parser.add_argument("-m", "--MLmodel",default="default")
 args = parser.parse_args()
-
 queue = "ml." + args.MLmodel
 startTime=0;
 

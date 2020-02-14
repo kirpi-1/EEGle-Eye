@@ -25,19 +25,19 @@ args = parser.parse_args()
 
 #rmquser = os.environ['RABBITMQ_USERNAME']
 #rmqpass = os.environ['RABBITMQ_PASSWORD']
-cred = pika.PlainCredentials(args.user_name,args.password)
-rmqIP = args.host
-userName = args.user_name
-sessionID = args.user_name+"_test"#str(uuid.uuid4())
-routing_key=args.queue_name
+cred = pika.PlainCredentials(args.RMQuser,args.RMQpassword)
+rmqIP = args.RMQhost
+userName = args.RMQuser
+sessionID = args.RMQuser+"_test"#str(uuid.uuid4())
+routing_key=args.RMQqueue
 #corr_id = str(uuid.uuid4())
 rmqargs = dict()
 rmqargs['x-message-ttl']=10000
 
 params = pika.ConnectionParameters(	host=rmqIP, \
-									port=args.port,\
+									port=args.RMQport,\
 									credentials=cred, \
-									virtual_host=args.vhost)
+									virtual_host=args.RMQvhost)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
@@ -87,7 +87,7 @@ while(True):
 	#print("frame length is:", len(frame))
 	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	
-	channel.basic_publish(exchange=args.exchange,
+	channel.basic_publish(exchange=args.RMQexchange,
 						routing_key=routing_key,
 						body=frame)
 						#properties=props,

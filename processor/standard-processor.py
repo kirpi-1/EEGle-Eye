@@ -17,25 +17,25 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 parser = RMQUtils.getParser()
-parser.set_defaults(user_name='processor', password='processor')
-parser.add_argument("-i","--input-queue",default="processing")
+parser.set_defaults(RMQuser='processor', RMQpassword='processor')
+parser.add_argument("-i","--RMQinput-queue",default="processing")
 args = parser.parse_args()
 
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = np.array([59, 61])
 
 # connection settings
-cred = pika.PlainCredentials(args.user_name,args.password)
-rmqIP = args.host
-rmqExchange = args.exchange
-routing_key=args.queue_name
-in_queue = args.input_queue
+cred = pika.PlainCredentials(args.RMQuser,args.RMQpassword)
+rmqIP = args.RMQhost
+rmqExchange = args.RMQexchange
+routing_key=args.RMQqueue
+in_queue = args.RMQinput_queue
 
 
 params = pika.ConnectionParameters(	host=rmqIP, \
-									port=args.port,\
+									port=args.RMQport,\
 									credentials=cred, \
-									virtual_host=args.vhost)
+									virtual_host=args.RMQvhost)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=in_queue,durable = True, passive=True)
@@ -73,12 +73,12 @@ def nparray_callback(ch, method, props, body):
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
-	channel.basic_publish(exchange=args.exchange,
+	channel.basic_publish(exchange=args.RMQexchange,
 						routing_key="ml."+header['ML_model'],
 						body=frame,
 						mandatory=True)#properties=props,
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
-print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(args.port)]),":".join([args.vhost,args.exchange,in_queue]), args.user_name))
+print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(args.RMQport)]),":".join([args.RMQvhost,args.RMQexchange,in_queue]), args.RMQuser))
 
 channel.start_consuming()
