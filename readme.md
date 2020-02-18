@@ -42,5 +42,5 @@ The "eeg" queue is the input queue where the producer sends its messages to be r
 
 The "processing" queue is where the windowing worker sends its messages to be read by the processing worker.
 
-The "ml.default" queue is where the processing worker sends its messages to be read by the machine learning model. In this case, the model is the "default" model. New models should use a routing key following the "ml.<name>" convention.
+The "ml.default" queue is where the processing worker sends its messages to be read by the machine learning model. In this case, the model is the "default" model. New models should use a routing key following the "ml.\<name\>" convention.
 
