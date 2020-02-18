@@ -47,10 +47,10 @@ def nparray_callback(ch, method, props, body):
 	# then highpass to remove <1Hz signal
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
-	eegfft = np.absolute(np.fft.fft(eeg,axis=0))
-	#print()
+	eegfft = np.absolute(np.fft.fft(eeg,axis=0))	
 	logger.info("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
-	#freqs = np.fft.fftfreq(time.shape[0],1/header['sampling_rate'])
+	
+	# pack up the data and send on through
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
