@@ -13,9 +13,11 @@ The following settings can be adjusted via configuration files and command line 
 The default exchange used is named "eegle".
 #### Queues
 There should be at least 3 durable queues, which are by default named:
+
 * eeg
 * processing
 * ml.default
+
 The "eeg" queue is the input queue where the producer sends its messages to be read by the windowing worker.
 
 The "processing" queue is where the windowing worker sends its messages to be read by the processing worker.
