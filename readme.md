@@ -23,7 +23,11 @@ BNCI Horizons: http://bnci-horizon-2020.eu/database/data-sets
 
 
 ## Engineering challenges
+One challenge I encountered was that EEG data is not standardized. Each EEG session may use a different number of channels, sampling rate, channel names, order for channel data for streaming, etc. There exists a data format named .edf (European Data Format) that one of my datasets uses, however the data is saved in channel order (data for the entire session for channel one is saved, then the second channel is saved) which makes it unsuitible for streaming. Therefore, I had to come up with a data format that I could use to send the data over a network and create serialization/deserialization methods for it. To address the issue of streaming, I decided to pack the data in order of sample. For N channels and M samples, the data is packed in an array in this order:
 
+| Sample_1_1 | Sample_2_1 | ... | Sample_N_1
+
+I came up with a format that uses a variable-size JSON header
 ## Trade-offs
 
 ## How to install and get it up and running
