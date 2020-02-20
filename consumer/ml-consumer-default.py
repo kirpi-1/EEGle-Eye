@@ -7,6 +7,7 @@ import psycopg2
 sys.path.append('../utils/')
 import time
 from datetime import datetime;
+from datetime import timedelta;
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
 import argparse
@@ -73,7 +74,14 @@ def nparray_callback(ch, method, props, body):
 					(sessionID, userName, mlModel, preprocessing))
 			conn.commit()
 		
-	now = datetime.utcnow()
+			h['month']  = int(start_time.month)
+	h['day']    = int(start_time.day)
+	h['hour']   = int(start_time.hour)
+	h['minute'] = int(start_time.minute)
+	h['second'] = int(start_time.second)
+	h['microsecond'] = int(start_time.microsecond)
+	
+	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(microseconds=1000*timestamp)
 	# insert actual data
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	

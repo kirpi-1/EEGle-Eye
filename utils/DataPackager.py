@@ -2,6 +2,7 @@ import struct
 import json
 import sys
 import numpy as np
+from datetime import datetime;
 
 def packHeaderAndData(header, data):
 	# header - dictionary of header items
@@ -34,10 +35,11 @@ def unpackHeaderAndData(message):
 
 def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 		numSamples,	numChannels, sessionID='', mlModel='default',\
-		preprocessing="standard", sampling_rate=250):
+		preprocessing="standard", sampling_rate=250, start_datetime=0):
 	#frame number	
 	#sampling rate
 	#number of channels
+	# start_time is time in milliseconds since 2020
 	if sessionID=='':
 		sessionID = userName;
 	h = dict()
@@ -45,11 +47,20 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	h['session_id']=str(sessionID)
 	h['frame_number']=int(frameNumber)
 	h['time_stamp']=int(timeStamp)
+	if(start_datetime==0):
+		start_datetime = datetime.utcnow()
+	h['year']   = int(start_time.year)
+	h['month']  = int(start_time.month)
+	h['day']    = int(start_time.day)
+	h['hour']   = int(start_time.hour)
+	h['minute'] = int(start_time.minute)
+	h['second'] = int(start_time.second)
+	h['microsecond'] = int(start_time.microsecond)
 	h['ML_model']=str(mlModel)
 	h['preprocessing']=str(preprocessing)
 	h['sampling_rate']=int(sampling_rate)
 	h['num_samples'] = int(numSamples)
-	h['num_channels'] = int(numChannels)
+	h['num_channels'] = int(numChannels)	
 	if not type(channelNames) is list:
 		raise TypeError("channel names must be a list")
 	h['channel_names']=channelNames
