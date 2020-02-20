@@ -76,16 +76,15 @@ def nparray_callback(ch, method, props, body):
 		records = cur.fetchall()
 		conn.commit()		
 		logger.debug("records found: {}".format(records))
-		try{
+		try:
 			if len(records)==0: 
 				# if it's not recorded, add it to the database
 				cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
 						(sessionID, userName, mlModel, preprocessing))
-				conn.commit()
-		}
-		except psycopg2.errors.UniqueViolation as e{
+				conn.commit()		
+		except psycopg2.errors.UniqueViolation as e:
 			loger.info(e)
-		}
+		
 		#mutex.release()
 	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timestamp)
