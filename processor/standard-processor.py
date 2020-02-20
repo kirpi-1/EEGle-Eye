@@ -9,6 +9,7 @@ import RMQUtils
 
 from scipy.signal import butter, lfilter, freqz
 import logging
+import configparser
 
 # sanity check to quit on CTRL+C
 def signal_handler(signal, frame):
@@ -16,12 +17,16 @@ def signal_handler(signal, frame):
 	sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
 
+
 # get generic parser from utils module
 parser = RMQUtils.getParser()
 # override default argument and add argument
-parser.set_defaults(RMQuser='processor', RMQpassword='processor')
 parser.add_argument("-i","--RMQinput-queue",default="processing")
+parser.set_defaults(rmq-config='processor.conf')
+
 args = parser.parse_args()
+
+config = configparser.ConfigParser()
 
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = 60
