@@ -13,6 +13,7 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 import argparse
 import logging
 import configparser
+from multiprocessing import Pool
 
 
 parser = argparse.ArgumentParser();
@@ -46,7 +47,7 @@ def classifyData(header, data):
 
 def nparray_callback(ch, method, props, body):
 	global startTime
-	global conn
+	global conn, params
 	cur = conn.cursor();
 	out = list();
 	header, data = unpackHeaderAndData(body)
@@ -81,6 +82,16 @@ def nparray_callback(ch, method, props, body):
 	conn.commit();
 	logger.info("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
 
+def processQueue(name):
+	global params
+	RMQargs = dict()
+	RMQargs['message-ttl']=10000
+	connection = pika.BlockingConnection(params)
+	channel = connection.channel()
+	channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
+	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
+	channel.start_consuming()
+
 conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
 		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 
@@ -90,19 +101,18 @@ params = pika.ConnectionParameters(host=config['RabbitMQ']['Host'],
 									port=config['RabbitMQ']['Port'],
 									credentials=credentials,
 									virtual_host=config['RabbitMQ']['Vhost'])
-RMQargs = dict()
-RMQargs['message-ttl']=10000
-connection = pika.BlockingConnection(params)
-channel = connection.channel()
-channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
-channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
-
-
-
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
-channel.start_consuming()
+
+
+pool = Pool(processes = 4)
+pool.map(processQueue,np.arange(4))
+
+
+
+
+
 
 
 
