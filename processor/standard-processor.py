@@ -90,6 +90,6 @@ channel.queue_declare(queue=in_queue,durable = True, passive=True)
 
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
-print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), username))
+print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
 
 channel.start_consuming()
