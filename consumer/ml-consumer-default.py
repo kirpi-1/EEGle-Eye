@@ -74,7 +74,7 @@ def nparray_callback(ch, method, props, body):
 					(sessionID, userName, mlModel, preprocessing))
 			conn.commit()
 	
-	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(microseconds=1000*timestamp)
+	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timestamp)
 	# insert actual data
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
