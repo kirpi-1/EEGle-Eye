@@ -49,7 +49,7 @@ BANDSTOP_FREQ = 60
 # turn on logger
 logging.getLogger("pika").setLevel(logging.WARNING)
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__).setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	sos = butter(order, cutoff, btype=type, output='sos',fs=fs)	
@@ -75,7 +75,7 @@ def nparray_callback(ch, method, props, body):
 	header, data = unpackHeaderAndData(body)	
 	processed_data = process(header, data)	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=header['time_stamp'])
-	logger.info("session: {}, frame: {}, now: {},timestamp: {}, timechan[0]:{}".format(header["session_id"], header["frame_number"],now, header['time_stamp'],data[0][0]))
+	logger.debug("session: {}, frame: {}, now: {},timestamp: {}, timechan[0]:{}".format(header["session_id"], header["frame_number"],now, header['time_stamp'],data[0][0]))
 	
 	# pack up the data and send on through
 	connection = pika.BlockingConnection(params)

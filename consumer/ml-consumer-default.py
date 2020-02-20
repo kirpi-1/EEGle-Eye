@@ -33,7 +33,7 @@ sessionList = list()
 # turn on logger
 logging.getLogger("pika").setLevel(logging.WARNING)
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__).setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
