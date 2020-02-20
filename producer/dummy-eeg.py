@@ -98,8 +98,9 @@ while(True):
 						numChannels=numChannels, sampling_rate=args.sampling_rate, mlModel='default',
 						preprocessing="standard")
 	
-	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, int(startTime*1000), numChannels, args.sampling_rate))
-
+	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=int(startTime*1000))
+	print("sessionID: {}, frame: {}, now: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, now, int(startTime*1000), numChannels, args.sampling_rate))
+	
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
 	#vis.line(win=linwin,Y=signal[0,:])	
