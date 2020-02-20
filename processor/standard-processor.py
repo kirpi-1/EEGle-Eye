@@ -85,7 +85,7 @@ def nparray_callback(ch, method, props, body):
 						body=frame,
 						mandatory=True)#properties=props,
 
-def readQueue():
+def readQueue(name):
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
 	channel.queue_declare(queue=in_queue,durable = True, passive=True)
@@ -99,6 +99,6 @@ params = pika.ConnectionParameters(	host=rmqIP, \
 									
 print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
 pool = Pool(processes = 4)
-pool.map(readQueue)
+pool.map(readQueue,np.arange(4))
 
 
