@@ -38,7 +38,7 @@ userName = config['RabbitMQ']['Username']
 password = config['RabbitMQ']['Password']
 year_begin = int(time.mktime(time.struct_time((2020,1,1,0,0,0,0,1,0))))
 now = int(time.mktime(time.gmtime()))
-sessionID = userName+str(now-year_begin)#+str(uuid.uuid4())
+sessionID = args.eegle_id+str(now-year_begin)#+str(uuid.uuid4())
 routing_key=config['RabbitMQ']['RoutingKey']
 
 rmqargs = dict()
