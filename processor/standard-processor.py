@@ -21,12 +21,26 @@ signal.signal(signal.SIGINT, signal_handler)
 # get generic parser from utils module
 parser = argparse.ArgumentParser()
 # override default argument and add argument
-parser.add_argument("-r", "--rmq-config", default="producer.conf", help="location of the configuration file")
+parser.add_argument("-r", "--rmq-config", default="processor.conf", help="location of the configuration file")
 
 args = parser.parse_args()
 
 config = configparser.ConfigParser()
-RMQexchange = config['RabbitMQ']['Exchange']
+config.read(args.rmq_config)
+
+# connection settings
+rmqSettings = config['RabbitMQ']
+RMQexchange = rmqSettings['Exchange']
+rmqIP = rmqSettings['Host']
+rmqPort = rmqSettings['Port']
+rmqVhost = rmqSettings['Vhost']
+rmqExchange = rmqSettings['Exchange']
+routing_key = rmqSettings['RoutingKey']
+in_queue = rmqSettings['InputQueue']
+userName = rmqSettings['Username']
+password = rmqSettings['Password']
+cred = pika.PlainCredentials(userName, password)
+
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = 60
 
@@ -64,16 +78,11 @@ def nparray_callback(ch, method, props, body):
 						mandatory=True)#properties=props,
 
 
-# connection settings
-cred = pika.PlainCredentials(args.RMQuser,args.RMQpassword)
-rmqIP = args.RMQhost
-rmqExchange = args.RMQexchange
-routing_key=args.RMQqueue
-in_queue = args.RMQinput_queue
+
 params = pika.ConnectionParameters(	host=rmqIP, \
-									port=args.RMQport,\
+									port=rmqPort,\
 									credentials=cred, \
-									virtual_host=args.RMQvhost)
+									virtual_host=rmqVhost)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=in_queue,durable = True, passive=True)
@@ -81,6 +90,6 @@ channel.queue_declare(queue=in_queue,durable = True, passive=True)
 
 
 channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
-print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(args.RMQport)]),":".join([args.RMQvhost,args.RMQexchange,in_queue]), args.RMQuser))
+print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), username))
 
 channel.start_consuming()
