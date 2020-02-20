@@ -79,7 +79,7 @@ def nparray_callback(ch, method, props, body):
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
 	conn.commit();
-	logger.debug("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
+	logger.info("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
 
 conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
 		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
