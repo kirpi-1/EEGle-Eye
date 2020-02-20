@@ -92,11 +92,10 @@ while(True):
 	header = makeHeader(userName = userName, sessionID = sessionID,\
 						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
-						numChannels=args.num_chan, sampling_rate=args.sampling_rate, mlModel='default',
+						numChannels=args.num_chan+1, sampling_rate=args.sampling_rate, mlModel='default',
 						preprocessing="standard")
 	
-	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}",
-			sessionID, frameNumber, int(startTime*1000), args.num_chan, args.sampling_rate)
+	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, int(startTime*1000), args.num_chan, args.sampling_rate))
 
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
