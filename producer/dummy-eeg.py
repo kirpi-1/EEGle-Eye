@@ -109,6 +109,7 @@ while(True):
 	frameNumber = frameNumber + 1
 	time.sleep(args.sample_time)
 	if(timeToLive>0 and time.time()-expirationTimer > timeToLive):
+		print("Time to live exceeded, exiting")
 		sys.exit(0)
 	#x = input();
 
