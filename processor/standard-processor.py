@@ -48,7 +48,7 @@ BANDSTOP_FREQ = 60
 
 # turn on logger
 logging.getLogger("pika").setLevel(logging.WARNING)
-#logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__).setLevel(logging.INFO)
 
 def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
