@@ -100,7 +100,7 @@ while(True):
 						numChannels=numChannels, sampling_rate=args.sampling_rate, mlModel='default',
 						preprocessing="standard",start_datetime = startDateTime)
 	
-	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timeStamp))
+	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timeStamp)
 	print("sessionID: {}, frame: {}, now: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, now, timeStamp, numChannels, args.sampling_rate))
 	
 	frame = packHeaderAndData(header,signal)
