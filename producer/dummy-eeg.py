@@ -96,7 +96,7 @@ while(True):
 						preprocessing="standard")
 	
 	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}",
-			sessionID, frameNumber, timeStamp, numChannels, args.sampling_rate)
+			sessionID, frameNumber, int(startTime*1000), numChannels, args.sampling_rate)
 
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
