@@ -87,6 +87,7 @@ def nparray_callback(ch, method, props, body):
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
 	conn.commit();
+	conn.close();
 	logger.info("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
 
 def processQueue(name):
@@ -95,7 +96,7 @@ def processQueue(name):
 	RMQargs['message-ttl']=10000
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
-	channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
+	channel.queue_declare(queue=queue,passive = True, arguments=RMQargs,durable = True)
 	#newCallback = partial(nparray_callback, ch, method, props, body, postgresConnection = conn)
 	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
 	#channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
@@ -115,8 +116,8 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 
-pool = Pool(processes = 2)
-pool.map(processQueue,np.arange(2))
+pool = Pool(processes = 4)
+pool.map(processQueue,np.arange(4))
 
 
 
