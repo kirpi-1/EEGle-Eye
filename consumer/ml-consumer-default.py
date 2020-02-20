@@ -70,7 +70,7 @@ def nparray_callback(ch, method, props, body):
 		sessionList.append(sessionID)
 		# if it hasn't, query the database to see if it knows
 		select_query = "SELECT sess_id FROM sessions where sess_id='{}'".format(sessionID)
-		mutex.acquire()
+		#mutex.acquire()
 		cur.execute(select_query)
 		records = cur.fetchall()
 		conn.commit()
@@ -80,7 +80,7 @@ def nparray_callback(ch, method, props, body):
 			cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
 					(sessionID, userName, mlModel, preprocessing))
 			conn.commit()
-		mutex.release()
+		#mutex.release()
 	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timestamp)
 	# insert actual data
@@ -92,11 +92,10 @@ def nparray_callback(ch, method, props, body):
 
 def processQueue(name):
 	global params
-	RMQargs = dict()
-	RMQargs['message-ttl']=10000
+
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
-	channel.queue_declare(queue=queue,passive = True, arguments=RMQargs,durable = True)
+	channel.queue_declare(queue=queue,passive = True,durable = True)
 	#newCallback = partial(nparray_callback, ch, method, props, body, postgresConnection = conn)
 	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
 	#channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
@@ -116,8 +115,8 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 
-pool = Pool(processes = 4)
-pool.map(processQueue,np.arange(4))
+pool = Pool(processes = 1)
+pool.map(processQueue,np.arange(1)))
 
 
 
