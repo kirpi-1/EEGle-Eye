@@ -20,7 +20,7 @@ parser.add_argument("-l", "--MLmodel",default="default")
 
 args = parser.parse_args()
 config = configparser.ConfigParser()
-config.read(args.rmq_config)
+config.read(args.config)
 
 queue = "ml." + args.MLmodel
 startTime=0;
