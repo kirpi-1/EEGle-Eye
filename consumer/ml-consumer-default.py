@@ -14,6 +14,7 @@ import argparse
 import logging
 import configparser
 from multiprocessing import Pool, Lock
+from functools import partial
 
 
 parser = argparse.ArgumentParser();
@@ -86,17 +87,23 @@ def nparray_callback(ch, method, props, body):
 
 def processQueue(name):
 	global params
+	
+	conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
+							password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
+
+	
 	RMQargs = dict()
 	RMQargs['message-ttl']=10000
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
 	channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
-	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
+	newCallback = partial(nparray_callback, postgresConnection)
+	#channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
+	channel.basic_consume(queue=queue, on_message_callback=newCallback(conn), auto_ack=True)
+
 	channel.start_consuming()
 
 mutex = Lock()
-conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
-		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 
 
 credentials = pika.PlainCredentials(config['RabbitMQ']['Username'], config['RabbitMQ']['Password'])
