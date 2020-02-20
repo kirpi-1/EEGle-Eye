@@ -5,7 +5,7 @@ import sys, signal
 sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
-import RMQUtils
+import argparse
 
 from scipy.signal import butter, lfilter, freqz
 import logging
@@ -19,15 +19,14 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 # get generic parser from utils module
-parser = RMQUtils.getParser()
+parser = argparse.ArgumentParser()
 # override default argument and add argument
-parser.add_argument("-i","--RMQinput-queue",default="processing")
-parser.set_defaults(rmq-config='processor.conf')
+parser.add_argument("-r", "--rmq-config", default="producer.conf", help="location of the configuration file")
 
 args = parser.parse_args()
 
 config = configparser.ConfigParser()
-
+RMQexchange = config['RabbitMQ']['Exchange']
 HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = 60
 
@@ -59,7 +58,7 @@ def nparray_callback(ch, method, props, body):
 	data = np.hstack([timeChan,eegfft])
 	frame = packHeaderAndData(header,data)
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
-	channel.basic_publish(exchange=args.RMQexchange,
+	channel.basic_publish(exchange=RMQexchange,
 						routing_key="ml."+header['ML_model'],
 						body=frame,
 						mandatory=True)#properties=props,

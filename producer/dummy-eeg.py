@@ -10,7 +10,6 @@ import visdom
 import json
 sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData
-import RMQUtils
 import time
 import configparser
 import argparse
@@ -32,17 +31,18 @@ parser.add_argument("-z", "--sample-time",default=1.0, type=float, help="length 
 args = parser.parse_args()
 config = configparser.ConfigParser()
 
-cred = pika.PlainCredentials(config['RabbitMQ']['Username'],config['RabbitMQ']['Password']args.RMQuser)
 rmqIP = config['RabbitMQ']['Host']
 userName = config['RabbitMQ']['Username']
+password = config['RabbitMQ']['Password']
 year_begin = int(time.mktime(time.struct_time((2020,1,1,0,0,0,0,1,0))))
 now = int(time.mktime(time.gmtime()))
-	sessionID = args.RMQuser+str(now-year_begin)#+str(uuid.uuid4())
+sessionID = userName+str(now-year_begin)#+str(uuid.uuid4())
 routing_key=config['RabbitMQ']['RoutingKey']
 
 rmqargs = dict()
 rmqargs['x-message-ttl']=10000
 
+cred = pika.PlainCredentials(userName, password)
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=args.RMQport,\
 									credentials=cred, \
