@@ -25,11 +25,32 @@ BNCI Horizons: http://bnci-horizon-2020.eu/database/data-sets
 
 
 ## Engineering challenges
+### Data Format
 One challenge I encountered was that EEG data is not standardized. Each EEG session may use a different number of channels, sampling rate, channel names, order for channel data for streaming, etc. There exists a data format named .edf (European Data Format) that one of my datasets uses, however the data is saved in channel order (data for the entire session for channel one is saved, then the second channel is saved) which makes it unsuitible for streaming. Therefore, I had to come up with a data format that I could use to send the data over a network and create serialization/deserialization methods for it. To address the issue of streaming, I decided to pack the data in order of sample. For N channels and M samples, the data is packed in an array in this order:
 
-| Sample_1_1 | Sample_2_1 | ... | Sample_N_1
+| Channel 1 | Channel 2 | ...  | Channel N |
+|------------|------------|-----|-----------|
+| Sample 1,1 | Sample 2,1 | ... | Sample N,1|
+| ... | ... | ... | ... |
+| Sample 1,M| Sample 2,M| ... | Sample N, M|
 
-I came up with a format that uses a variable-size JSON header
+In order to record information about the session, I used a variable size JSON header. This header includes information such as number and name of channels, sampling rate, time stamp, and desired machine learning model and processing steps.
+
+Finally, the number of bytes the JSON header used was recorded. The final structure of the data format was:
+| Field |Size |
+|---|---|
+| Size of Header | 1 byte |
+| JSON Header | size_of_header bytes |
+| EEG Data | N_channels * M_samples bytes |
+
+### Message ordering
+
+EEG data is time dependent. Each message needs to be in order as it arrives to the windowing worker. RabbitMQ ensures that messages are consumed in the order that they were produced, so the windowing worker (flink) gets a stream of data that is in order. The processing that flink does is relatively light weight so it is able to process the messages
+
+### Bottlenecks
+
+The first major bottleneck is in the processing worker. This worker must process a multiple of the input messages. By default, for every one input message, the processing worker must process 5 messages (there is an 80% overlap by default)
+
 ## Trade-offs
 
 ## How to install and get it up and running
