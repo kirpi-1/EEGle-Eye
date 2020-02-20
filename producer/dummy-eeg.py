@@ -27,6 +27,7 @@ parser.add_argument("-n", "--num-chan", default=1,type=int, help="default is 1")
 parser.add_argument("-c", "--cycle-freq", default=11,type=float, help="the frequency that cycles. Default is 11")
 parser.add_argument("-s", "--sampling-rate",default=250,type=int, help="defaults to 250 Hz")
 parser.add_argument("-z", "--sample-time",default=1.0, type=float, help="length of time to create data. Defaults to 1.0 seconds")
+parser.add_argument("-t", "--time-to-live",default=-1, type=int, help="amount of time in seconds before exiting automatically")
 
 args = parser.parse_args()
 config = configparser.ConfigParser()
@@ -53,12 +54,15 @@ channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
 #props = pika.BasicProperties(correlation_id=corr_id)
 
 startTime = 0;
+
 freqs = [1,4,11,22,35,80];
 fullCycle=10
 print("Sending messages. CTRL+C to quit.")
 plotTime = np.zeros((args.sampling_rate*4))
 plotSignal = np.zeros((args.sampling_rate*4))
 
+expirationTimer = time.time()
+timeTolive = args.time_to_live;
 #vis = visdom.Visdom()
 #linwin = visdom.line([0])
 
@@ -104,5 +108,7 @@ while(True):
 	startTime = startTime+1
 	frameNumber = frameNumber + 1
 	time.sleep(args.sample_time)
+	if(timeToLive>0 and time.time()-expirationTimer > timeToLive):
+		sys.exit(0)
 	#x = input();
 
