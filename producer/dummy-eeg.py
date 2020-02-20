@@ -62,7 +62,7 @@ plotTime = np.zeros((args.sampling_rate*4))
 plotSignal = np.zeros((args.sampling_rate*4))
 
 expirationTimer = time.time()
-timeTolive = args.time_to_live;
+timeToLive = args.time_to_live;
 #vis = visdom.Visdom()
 #linwin = visdom.line([0])
 
