@@ -47,8 +47,9 @@ HIGHPASS_CUTOFF = 1
 BANDSTOP_FREQ = 60
 
 # turn on logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.getLogger("pika").setLevel(logging.WARNING)
+#logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__).setLevel(logging.INFO)
 
 def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	sos = butter(order, cutoff, btype=type, output='sos',fs=fs)	
