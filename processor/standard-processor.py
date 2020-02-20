@@ -11,6 +11,7 @@ from scipy.signal import sosfilt
 import logging
 import configparser
 from datetime import datetime, timedelta
+import multiprocessing import Pool
 
 # sanity check to quit on CTRL+C
 def signal_handler(signal, frame):
@@ -54,10 +55,7 @@ def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	y = sosfilt(sos, data, axis=0)
 	return y
 
-def nparray_callback(ch, method, props, body):
-	out = list();
-	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF
-	header, data = unpackHeaderAndData(body)
+def process(header, data):
 	#get channel number for time/TIME
 	timeChan, eeg = splitTimeAndEEG(header, data)
 	# bandstop 60hz and harmonics
@@ -67,11 +65,19 @@ def nparray_callback(ch, method, props, body):
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))	
+	data = np.hstack([timeChan,eegfft])
+	return data;
+
+def nparray_callback(ch, method, props, body):
+	out = list();
+	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF
+	header, data = unpackHeaderAndData(body)	
+	processed_data = process(header, data)	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=header['time_stamp'])
 	logger.debug("session: {}, frame: {}, now: {},timestamp: {}, timechan[0]:{}".format(header["session_id"], header["frame_number"],now, header['time_stamp'],timeChan[0]))
 	
 	# pack up the data and send on through
-	data = np.hstack([timeChan,eegfft])
+	
 	frame = packHeaderAndData(header,data)
 	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
 	channel.basic_publish(exchange=RMQexchange,
@@ -79,19 +85,20 @@ def nparray_callback(ch, method, props, body):
 						body=frame,
 						mandatory=True)#properties=props,
 
-
+def readQueue():
+	connection = pika.BlockingConnection(params)
+	channel = connection.channel()
+	channel.queue_declare(queue=in_queue,durable = True, passive=True)
+	channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
+	channel.start_consuming()
 
 params = pika.ConnectionParameters(	host=rmqIP, \
 									port=rmqPort,\
 									credentials=cred, \
 									virtual_host=rmqVhost)
-connection = pika.BlockingConnection(params)
-channel = connection.channel()
-channel.queue_declare(queue=in_queue,durable = True, passive=True)
-
-
-
-channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
+									
 print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
+pool = Pool(processes = 4)
+pool.map(readQueue)
 
-channel.start_consuming()
+
