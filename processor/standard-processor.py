@@ -68,7 +68,7 @@ def nparray_callback(ch, method, props, body):
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=header['time_stamp'])
-	logger.info("session: {}, frame: {}, now: {},timestamp: {}, timechan[0]:{}".format(header["session_id"], header["frame_number"],now, header['time_stamp'],timeChan[0]))
+	logger.debug("session: {}, frame: {}, now: {},timestamp: {}, timechan[0]:{}".format(header["session_id"], header["frame_number"],now, header['time_stamp'],timeChan[0]))
 	
 	# pack up the data and send on through
 	data = np.hstack([timeChan,eegfft])
