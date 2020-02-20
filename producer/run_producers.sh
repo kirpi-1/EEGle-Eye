@@ -4,7 +4,7 @@
 
 for ((i=0; i< $1;i++))
 do
-	echo "$i"
-	freq = (( ( RANDOM % 25 )  + 5 ))
-	python3 dummy-eeg.py --cycle-freq $freq --us&
+	freq=$((5 * i))
+	echo $freq
+	python3 dummy-eeg.py --cycle-freq $freq --eegle-id producer_"$i"_ &
 done
