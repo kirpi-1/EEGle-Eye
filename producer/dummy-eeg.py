@@ -84,7 +84,7 @@ while(True):
 	signal = np.zeros((len(t),args.num_chan+1))
 	signal[:,0] = t*1000 # miliseconds
 	channelNames = list();
-	channelNames.append('time');
+	channelNames.append('time');	
 	for c in np.arange(args.num_chan):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
@@ -92,11 +92,11 @@ while(True):
 	header = makeHeader(userName = userName, sessionID = sessionID,\
 						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
-						numChannels=signal.shape[1], sampling_rate=args.sampling_rate, mlModel='default',
+						numChannels=args.num_chan, sampling_rate=args.sampling_rate, mlModel='default',
 						preprocessing="standard")
 	
 	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}",
-			sessionID, frameNumber, int(startTime*1000), numChannels, args.sampling_rate)
+			sessionID, frameNumber, int(startTime*1000), args.num_chan, args.sampling_rate)
 
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
