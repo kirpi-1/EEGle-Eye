@@ -5,23 +5,23 @@ import sys, signal
 import struct
 import psycopg2
 sys.path.append('../utils/')
-import time;
+import time
 from datetime import datetime;
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
-import RMQUtils;
 import argparse
 import logging
+import configparser
 
 
-parser = RMQUtils.getParser();
-parser.set_defaults(RMQuser='default_model', RMQpassword='default_model')
-parser.add_argument("-i", "--SQLhost",default="10.0.0.10",type=str)
-#parser.add_argument("-q", "--SQLport",default=
-parser.add_argument("-w", "--SQLuser",default="mldefault")
-parser.add_argument("-y", "--SQLpassword",default="mldefault")
+parser = argparse.ArgumentParser();
+parser.add_argument("-c", "--config", default="ml-default.conf", help="location of the configuration file")
 parser.add_argument("-l", "--MLmodel",default="default")
+
 args = parser.parse_args()
+config = configparser.ConfigParser()
+config.read(args.rmq_config)
+
 queue = "ml." + args.MLmodel
 startTime=0;
 sessionList = list()
@@ -36,6 +36,7 @@ def signal_handler(signal, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
+# arbitrary classification function
 def classifyData(header, data):
 	_class = 0
 	if header['time_stamp'] %10000 > 5000:
@@ -79,15 +80,15 @@ def nparray_callback(ch, method, props, body):
 	conn.commit();
 	logger.debug("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
 
-conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
-		password=args.SQLpassword,host=args.SQLhost)
+conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
+		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 
 
-credentials = pika.PlainCredentials(args.RMQuser, args.RMQpassword)
-params = pika.ConnectionParameters(host=args.RMQhost,\
-									port=args.RMQport,\
-									credentials=credentials,\
-									virtual_host=args.RMQvhost)
+credentials = pika.PlainCredentials(config['RabbitMQ']['Username'], config['RabbitMQ']['Password'])
+params = pika.ConnectionParameters(host=config['RabbitMQ']['Host'],
+									port=config['RabbitMQ']['Port'],
+									credentials=credentials,
+									virtual_host=config['RabbitMQ']['Vhost'])
 RMQargs = dict()
 RMQargs['message-ttl']=10000
 connection = pika.BlockingConnection(params)
