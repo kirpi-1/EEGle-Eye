@@ -66,7 +66,7 @@ def nparray_callback(ch, method, props, body):
 	eeg = butterworth_filter(eeg,HIGHPASS_CUTOFF,header['sampling_rate'],type='highpass')
 	# then fft
 	eegfft = np.absolute(np.fft.fft(eeg,axis=0))	
-	logger.info("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
+	logger.debug("Received: {} : {} : {}".format(header["user_name"], header["frame_number"],timeChan[0]))
 	
 	# pack up the data and send on through
 	data = np.hstack([timeChan,eegfft])
