@@ -13,6 +13,7 @@ from DataPackager import makeHeader,packHeaderAndData
 import time
 import configparser
 import argparse
+from datetime import datetime
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -79,6 +80,7 @@ def makeSignal(t, freqs,cyclingFreq = 11):
 #vis = visdom.Visdom()
 #win = vis.line(X=plotTime, Y=plotSignal)
 frameNumber = 0;
+startDateTime = datetime.utcnow()
 while(True):
 	t = np.arange(startTime,startTime+args.sample_time,1/args.sampling_rate,dtype=np.float32)
 	signal = np.zeros((len(t),args.num_chan+1))
