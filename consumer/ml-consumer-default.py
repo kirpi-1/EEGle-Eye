@@ -13,6 +13,7 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 import argparse
 import logging
 import configparser
+import multiprocessing
 from multiprocessing import Pool, Lock
 from functools import partial
 

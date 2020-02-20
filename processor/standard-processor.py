@@ -12,7 +12,7 @@ import logging
 import configparser
 from datetime import datetime, timedelta
 from multiprocessing import Pool
-
+import multiprocessing
 # sanity check to quit on CTRL+C
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
