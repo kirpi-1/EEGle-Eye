@@ -116,7 +116,7 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 pool = Pool(processes = 1)
-pool.map(processQueue,np.arange(1)))
+pool.map(processQueue,np.arange(1))
 
 
 
