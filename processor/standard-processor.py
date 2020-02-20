@@ -11,7 +11,7 @@ from scipy.signal import sosfilt
 import logging
 import configparser
 from datetime import datetime, timedelta
-import multiprocessing import Pool
+from multiprocessing import Pool
 
 # sanity check to quit on CTRL+C
 def signal_handler(signal, frame):
