@@ -97,9 +97,9 @@ def processQueue(name):
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
 	channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
-	newCallback = partial(nparray_callback, postgresConnection)
+	newCallback = partial(nparray_callback, ch, method, props, body, postgresConnection = conn)
 	#channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
-	channel.basic_consume(queue=queue, on_message_callback=newCallback(conn), auto_ack=True)
+	channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
 
 	channel.start_consuming()
 
