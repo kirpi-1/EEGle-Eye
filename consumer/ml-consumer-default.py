@@ -11,6 +11,8 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
 import RMQUtils;
 import argparse
+import logging
+
 
 parser = RMQUtils.getParser();
 parser.set_defaults(RMQuser='default_model', RMQpassword='default_model')
@@ -23,6 +25,10 @@ args = parser.parse_args()
 queue = "ml." + args.MLmodel
 startTime=0;
 sessionList = list()
+
+# turn on logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
@@ -42,7 +48,7 @@ def nparray_callback(ch, method, props, body):
 	cur = conn.cursor();
 	out = list();
 	header, data = unpackHeaderAndData(body)
-	print(header)
+	logger.debug(header)
 	timeChan, eeg = splitTimeAndEEG(header, data)
 	userName = header['user_name']
 	sessionID = header['session_id']
@@ -50,7 +56,7 @@ def nparray_callback(ch, method, props, body):
 	preprocessing = header['preprocessing']
 	mlModel = header['ML_model']
 	_class = classifyData(header, data)
-	print("classified as", _class)
+	logger.debug("classified as {}".format(_class))
 	# check if this session has already been recorded in local list
 	if not sessionID in sessionList:
 		sessionList.append(sessionID)
@@ -59,7 +65,7 @@ def nparray_callback(ch, method, props, body):
 		cur.execute(select_query)
 		records = cur.fetchall()
 		conn.commit()
-		print("records found: ", records)
+		logger.debug("records found: {}".format(records))
 		if len(records)==0: 
 			# if it's not recorded, add it to the database
 			cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
@@ -71,7 +77,7 @@ def nparray_callback(ch, method, props, body):
 	cur.execute("INSERT INTO data (sess_id, time_in, time_ms, class) VALUES (%s, %s, %s, %s)",\
 				(sessionID, now, timestamp, _class))	
 	conn.commit();
-	print("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
+	logger.debug("added {}, {}, {}, {}".format(sessionID, now, timestamp, _class))
 
 conn = psycopg2.connect(dbname="results", user=args.SQLuser,\
 		password=args.SQLpassword,host=args.SQLhost)
