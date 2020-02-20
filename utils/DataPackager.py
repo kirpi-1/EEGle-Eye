@@ -39,7 +39,7 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	#frame number	
 	#sampling rate
 	#number of channels
-	# start_time is time in milliseconds since 2020
+	# start_datetime is a UTC datetime
 	if sessionID=='':
 		sessionID = userName;
 	h = dict()
@@ -49,13 +49,13 @@ def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 	h['time_stamp']=int(timeStamp)
 	if(start_datetime==0):
 		start_datetime = datetime.utcnow()
-	h['year']   = int(start_time.year)
-	h['month']  = int(start_time.month)
-	h['day']    = int(start_time.day)
-	h['hour']   = int(start_time.hour)
-	h['minute'] = int(start_time.minute)
-	h['second'] = int(start_time.second)
-	h['microsecond'] = int(start_time.microsecond)
+	h['year']   = int(start_datetime.year)
+	h['month']  = int(start_datetime.month)
+	h['day']    = int(start_datetime.day)
+	h['hour']   = int(start_datetime.hour)
+	h['minute'] = int(start_datetime.minute)
+	h['second'] = int(start_datetime.second)
+	h['microsecond'] = int(start_datetime.microsecond)
 	h['ML_model']=str(mlModel)
 	h['preprocessing']=str(preprocessing)
 	h['sampling_rate']=int(sampling_rate)
