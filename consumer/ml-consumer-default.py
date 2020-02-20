@@ -47,7 +47,7 @@ def classifyData(header, data):
 
 def nparray_callback(ch, method, props, body):
 	global startTime
-	global conn, params
+	global conn, params, mutex, sessionList
 	cur = conn.cursor();
 	out = list();
 	header, data = unpackHeaderAndData(body)
