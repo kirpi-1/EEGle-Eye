@@ -96,8 +96,8 @@ while(True):
 	#print("frame length is:", len(frame))
 	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
 	
-	channel.basic_publish(exchange=args.RMQexchange,
-						routing_key=routing_key,
+	channel.basic_publish(exchange=config['RabbitMQ']['Exchange'],
+						routing_key=config['RabbitMQ']['RoutingKey'],
 						body=frame)
 						#properties=props,
 
