@@ -92,15 +92,16 @@ while(True):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
 	numChannels = signal.shape[1]
+	timeStamp = int(startTime*1000)
 	# make the header
 	header = makeHeader(userName = userName, sessionID = sessionID,\
-						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
+						frameNumber = frameNumber, timeStamp = timeStamp,\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
 						numChannels=numChannels, sampling_rate=args.sampling_rate, mlModel='default',
-						preprocessing="standard")
+						preprocessing="standard",start_datetime = startDateTime)
 	
-	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=int(startTime*1000))
-	print("sessionID: {}, frame: {}, now: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, now, int(startTime*1000), numChannels, args.sampling_rate))
+	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timeStamp))
+	print("sessionID: {}, frame: {}, now: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, now, timeStamp, numChannels, args.sampling_rate))
 	
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
