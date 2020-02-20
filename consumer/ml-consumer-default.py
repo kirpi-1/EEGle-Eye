@@ -29,9 +29,11 @@ queue = "ml." + args.MLmodel
 startTime=0;
 sessionList = list()
 
+
 # turn on logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.getLogger("pika").setLevel(logging.WARNING)
+#logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__).setLevel(logging.INFO)
 
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
