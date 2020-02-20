@@ -103,7 +103,8 @@ params = pika.ConnectionParameters(	host=rmqIP, \
 
 	
 print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
-pool = Pool(processes = 4)
-pool.map(readQueue,np.arange(4))
+numcpus = multiprocessing.cpu_count()
+pool = Pool(processes = numcpus)
+pool.map(readQueue,np.arange(numcpus))
 
 

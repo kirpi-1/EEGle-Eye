@@ -114,9 +114,9 @@ params = pika.ConnectionParameters(host=config['RabbitMQ']['Host'],
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
-
-pool = Pool(processes = 1)
-pool.map(processQueue,np.arange(1))
+numcpus = multiprocessing.cpu_count()
+pool = Pool(processes = numcpus)
+pool.map(processQueue,np.arange(numcpus))
 
 
 
