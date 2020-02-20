@@ -7,7 +7,7 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
 import argparse
 from scipy.signal import butter, lfilter, freqz
-from scipy.signal import sosfiflt
+from scipy.signal import sosfilt
 import logging
 import configparser
 
