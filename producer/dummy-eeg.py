@@ -66,12 +66,13 @@ timeToLive = args.time_to_live;
 #vis = visdom.Visdom()
 #linwin = visdom.line([0])
 
+# a helper function to make a fake EEG signal
 def makeSignal(t, freqs,cyclingFreq = 11):
 	signal = np.zeros(t.size)
 	for f in freqs:
 		signal = signal + np.cos(2*np.pi*t*f)+np.random.randn(t.size)
 	cycleTime = t % fullCycle - fullCycle/2
-	signal = signal + 2*np.cos(2*np.pi*t*11)*(cycleTime/fullCycle)	
+	signal = signal + 2*np.cos(2*np.pi*t*cyclingFreq)*(cycleTime/fullCycle)	
 	signal = signal / len(freqs); #normalize
 	return signal
 
@@ -87,13 +88,12 @@ while(True):
 	for c in np.arange(args.num_chan):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
-		
-		preprocessing="standard", sampling_rate=250):
-		
+	# make the header
 	header = makeHeader(userName = userName, sessionID = sessionID,\
 						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
-						numChannels=signal.shape[1], sampling_rate=args.sampling_rate, mlModel='default')
+						numChannels=signal.shape[1], sampling_rate=args.sampling_rate, mlModel='default',
+						preprocessing="standard")
 	
 	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}",
 			sessionID, frameNumber,, timeStamp, numChannels, args.sampling_rate)
