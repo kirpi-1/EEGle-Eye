@@ -65,6 +65,7 @@ def nparray_callback(ch, method, props, body):
 		sessionList.append(sessionID)
 		# if it hasn't, query the database to see if it knows
 		select_query = "SELECT sess_id FROM sessions where sess_id='{}'".format(sessionID)
+		mutex.acquire()
 		cur.execute(select_query)
 		records = cur.fetchall()
 		conn.commit()
@@ -74,6 +75,7 @@ def nparray_callback(ch, method, props, body):
 			cur.execute("INSERT INTO sessions (sess_id, user_name, ml_model, preprocessing) VALUES (%s, %s, %s, %s)",\
 					(sessionID, userName, mlModel, preprocessing))
 			conn.commit()
+		mutex.release()
 	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timestamp)
 	# insert actual data
@@ -92,6 +94,7 @@ def processQueue(name):
 	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
 	channel.start_consuming()
 
+mutex = multiprocessing.Lock()
 conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
 		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 
