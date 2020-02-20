@@ -88,11 +88,15 @@ while(True):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
 		
+		preprocessing="standard", sampling_rate=250):
+		
 	header = makeHeader(userName = userName, sessionID = sessionID,\
 						frameNumber = frameNumber, timeStamp = int(startTime*1000),\
 						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
-						numChannels=signal.shape[1])
-	print(header)
+						numChannels=signal.shape[1], sampling_rate=args.sampling_rate, mlModel='default')
+	
+	print("sessionID: {}, frame: {}, timestamp: {}, numchan: {}, fs: {}",
+			sessionID, frameNumber,, timeStamp, numChannels, args.sampling_rate)
 
 	frame = packHeaderAndData(header,signal)
 	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
