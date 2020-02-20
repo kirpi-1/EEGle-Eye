@@ -70,7 +70,7 @@ def process(header, data):
 
 def nparray_callback(ch, method, props, body):
 	out = list();
-	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF
+	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, channel
 	header, data = unpackHeaderAndData(body)	
 	processed_data = process(header, data)	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=header['time_stamp'])
@@ -78,17 +78,16 @@ def nparray_callback(ch, method, props, body):
 	
 	# pack up the data and send on through
 	
-	frame = packHeaderAndData(header,data)
-	connection = pika.BlockingConnection(params)
-	ch = connection.channel()
-	ch.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
-	ch.basic_publish(exchange=RMQexchange,
+	frame = packHeaderAndData(header,data)	
+	
+	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
+	channel.basic_publish(exchange=RMQexchange,
 						routing_key="ml."+header['ML_model'],
 						body=frame,
 						mandatory=True)#properties=props,
 
 def readQueue(name):
-	connection = pika.BlockingConnection(params)
+	global channel
 	channel = connection.channel()
 	channel.queue_declare(queue=in_queue,durable = True, passive=True)
 	channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
@@ -98,7 +97,7 @@ params = pika.ConnectionParameters(	host=rmqIP, \
 									port=rmqPort,\
 									credentials=cred, \
 									virtual_host=rmqVhost)
-									
+global connection = pika.BlockingConnection(params)									
 print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
 pool = Pool(processes = 4)
 pool.map(readQueue,np.arange(4))
