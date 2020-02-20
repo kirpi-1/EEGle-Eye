@@ -30,6 +30,7 @@ parser.add_argument("-z", "--sample-time",default=1.0, type=float, help="length 
 
 args = parser.parse_args()
 config = configparser.ConfigParser()
+config.read(args.rmq_config)
 
 rmqIP = config['RabbitMQ']['Host']
 userName = config['RabbitMQ']['Username']
