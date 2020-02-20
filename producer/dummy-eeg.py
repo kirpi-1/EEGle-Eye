@@ -33,6 +33,7 @@ config = configparser.ConfigParser()
 config.read(args.rmq_config)
 
 rmqIP = config['RabbitMQ']['Host']
+rmqPort = config['RabbitMQ']['Port']
 userName = config['RabbitMQ']['Username']
 password = config['RabbitMQ']['Password']
 year_begin = int(time.mktime(time.struct_time((2020,1,1,0,0,0,0,1,0))))
@@ -44,10 +45,8 @@ rmqargs = dict()
 rmqargs['x-message-ttl']=10000
 
 cred = pika.PlainCredentials(userName, password)
-params = pika.ConnectionParameters(	host=rmqIP, \
-									port=args.RMQport,\
-									credentials=cred, \
-									virtual_host=args.RMQvhost)
+params = pika.ConnectionParameters(host=rmqIP, port=rmqPort, 
+									credentials=cred, virtual_host=config['RabbitMQ']['Vhost'])
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
