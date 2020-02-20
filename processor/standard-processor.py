@@ -79,8 +79,10 @@ def nparray_callback(ch, method, props, body):
 	# pack up the data and send on through
 	
 	frame = packHeaderAndData(header,data)
-	channel.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
-	channel.basic_publish(exchange=RMQexchange,
+	connection = pika.BlockingConnection(params)
+	ch = connection.channel()
+	ch.queue_declare(queue="ml."+header['ML_model'],durable = True, passive = True)
+	ch.basic_publish(exchange=RMQexchange,
 						routing_key="ml."+header['ML_model'],
 						body=frame,
 						mandatory=True)#properties=props,
