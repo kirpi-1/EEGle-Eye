@@ -6,5 +6,5 @@ for ((i=0; i< $1;i++))
 do
 	freq=$((5 * i))
 	echo $freq
-	python3 dummy-eeg.py --cycle-freq $freq --eegle-id producer_"$i"_ &
+	python3 dummy-eeg.py --cycle-freq $freq --eegle-id producer_"$i"_ --time-to-live 60 &
 done
