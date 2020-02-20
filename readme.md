@@ -11,7 +11,7 @@ A watchful eye in the cloud.
 ## Introduction
 
 ## Architecture
-![Pipeline](https://github.com/kirpi-1/EEGle-eye/pipeline.png "Pipeline")
+![](https://github.com/kirpi-1/EEGle-Eye/blob/master/pipeline.png "Pipeline")
 
 Multiple patients (producers) stream EEG data to the RabbitMQ server.
 A Flink consumer reads the queue, splitting the datastreams by user. It then windows the data into subsamples which are each sent back to RabbitMQ.
