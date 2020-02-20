@@ -48,7 +48,9 @@ def classifyData(header, data):
 
 def nparray_callback(ch, method, props, body):
 	global startTime
-	global conn, params, mutex, sessionList
+	global params, mutex, sessionList
+	conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
+							password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 	cur = conn.cursor();
 	out = list();
 	header, data = unpackHeaderAndData(body)
@@ -88,8 +90,7 @@ def nparray_callback(ch, method, props, body):
 def processQueue(name):
 	global params
 	
-	conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
-							password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
+	
 
 	
 	RMQargs = dict()
@@ -98,8 +99,8 @@ def processQueue(name):
 	channel = connection.channel()
 	channel.queue_declare(queue=queue,arguments=RMQargs,durable = True)
 	newCallback = partial(nparray_callback, ch, method, props, body, postgresConnection = conn)
-	#channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
-	channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
+	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
+	#channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
 
 	channel.start_consuming()
 
