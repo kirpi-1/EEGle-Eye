@@ -13,7 +13,7 @@ from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 import argparse
 import logging
 import configparser
-from multiprocessing import Pool
+from multiprocessing import Pool, Lock
 
 
 parser = argparse.ArgumentParser();
@@ -94,7 +94,7 @@ def processQueue(name):
 	channel.basic_consume(queue=queue, on_message_callback=nparray_callback, auto_ack=True)
 	channel.start_consuming()
 
-mutex = multiprocessing.Lock()
+mutex = Lock()
 conn = psycopg2.connect(dbname="results", user=config['PostgreSQL']['Username'],
 		password=config['PostgreSQL']['Password'],host=config['PostgreSQL']['Host'])
 
