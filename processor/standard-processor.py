@@ -6,8 +6,8 @@ sys.path.append('../utils/')
 from DataPackager import makeHeader,packHeaderAndData, unpackHeaderAndData,\
 	splitTimeAndEEG
 import argparse
-
 from scipy.signal import butter, lfilter, freqz
+from sciypy.signal import sosfiflt
 import logging
 import configparser
 
@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	sos = butter(order, cutoff, btype=type, output='sos',fs=fs)	
-	y = signal.sosfilt(sos, data, axis=0)
+	y = sosfilt(sos, data, axis=0)
 	return y
 
 def nparray_callback(ch, method, props, body):
