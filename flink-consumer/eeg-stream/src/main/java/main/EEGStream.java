@@ -44,6 +44,7 @@ import org.apache.commons.cli.ParseException;
 
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
+		// options builder for using config file
 		Options options = new Options();
 		Option configOptions = Option.builder("c")
 								.required(false)
@@ -109,7 +110,7 @@ public class EEGStream{
 			PROCESSING_WINDOW_OVERLAP = 0.8f;
 		}
 		
-		
+		// ****************************** Actual Start of flink code ************************************
 		
 		// start flink stream
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -123,7 +124,8 @@ public class EEGStream{
 			.setPassword(RMQ_PASSWORD)
 			.setVirtualHost(RMQ_VHOST)
 			.build();
-
+		
+		// create a stream with RabbitMQ source
 		DataStream<Tuple3<Integer, EEGHeader, float[]>> stream = env.addSource(
 			new RMQEEGSource(
 					connectionConfig,
@@ -133,23 +135,17 @@ public class EEGStream{
 					)
 			).setParallelism(1); //non-parallel source is only required for exactly-once
 			
-
+		// key the data by sessionID, which is unique
+		// window by time, get last 2 seconds worth of data since that is smallest amount that can be worked on
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
-			.keyBy(new UserKeySelector())
-			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
+			.keyBy(new SessionIDKeySelector())
+			.timeWindow(Time.seconds(2),Time.seconds(1))
 			.process(new EEGProcessWindowFunction()
 							.setWindowLength(PROCESSING_WINDOW_LENGTH)
 							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
 							);
-
-		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
-			.setHost(RMQ_SERVER)
-			.setPort(RMQ_PORT)
-			.setUserName(RMQ_USERNAME)
-			.setPassword(RMQ_PASSWORD)
-			.setVirtualHost(RMQ_VHOST)
-			.build();
 		
+		// add the output
 		tmpout.addSink(new RMQSink<Tuple2<EEGHeader, float[]>>(
 			connectionConfig, 
 			new EEGSerializer(),
@@ -157,7 +153,7 @@ public class EEGStream{
 					.setQueueName(RMQ_PUBLISH_QUEUE))
 		);
 
-		//stream.print();
+		//execute the job
 		env.execute();
 
 	}

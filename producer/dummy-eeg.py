@@ -16,12 +16,16 @@ import argparse
 from datetime import datetime
 from datetime import timedelta
 
+# This generates dummy EEG that is made up of cosines of several frequencies
+# One frequency (default=11, can be passed as command line argument) cycles in power
+
+# sanity kill switch
 def signal_handler(signal, frame):
 	print("\nprogram exiting gracefully")
 	sys.exit(0)
-
 signal.signal(signal.SIGINT, signal_handler)
 
+# argument parsing
 parser = argparse.ArgumentParser();
 parser.add_argument("-r", "--rmq-config", default="producer.conf", help="location of the configuration file")
 parser.add_argument("-a", "--eegle-id", default="one", type=str, help="EEGle Eye userName. Defaults to \'one\'")
@@ -35,6 +39,7 @@ args = parser.parse_args()
 config = configparser.ConfigParser()
 config.read(args.rmq_config)
 
+# RMQ setup
 rmqIP = config['RabbitMQ']['Host']
 rmqPort = config['RabbitMQ']['Port']
 userName = config['RabbitMQ']['Username']
@@ -52,21 +57,7 @@ params = pika.ConnectionParameters(host=rmqIP, port=rmqPort,
 									credentials=cred, virtual_host=config['RabbitMQ']['Vhost'])
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
-channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True)
-#props = pika.BasicProperties(correlation_id=corr_id)
-
-startTime = 0;
-
-freqs = [1,4,11,22,35,80];
-fullCycle=10
-print("Sending messages. CTRL+C to quit.")
-plotTime = np.zeros((args.sampling_rate*4))
-plotSignal = np.zeros((args.sampling_rate*4))
-
-expirationTimer = time.time()
-timeToLive = args.time_to_live;
-#vis = visdom.Visdom()
-#linwin = visdom.line([0])
+channel.queue_declare(queue=routing_key,arguments=rmqargs,durable = True, passive=True)
 
 # a helper function to make a fake EEG signal
 def makeSignal(t, freqs,cyclingFreq = 11):
@@ -78,47 +69,58 @@ def makeSignal(t, freqs,cyclingFreq = 11):
 	signal = signal / len(freqs); #normalize
 	return signal
 
-#vis = visdom.Visdom()
-#win = vis.line(X=plotTime, Y=plotSignal)
+
+freqs = [1,4,11,22,35,80];
+fullCycle=10
+
+plotTime = np.zeros((args.sampling_rate*4))
+plotSignal = np.zeros((args.sampling_rate*4))
+
+# automatically kill the program after a set time
+# useful when used with the bash script that runs many copies of this at once
+expirationTimer = time.time()
+timeToLive = args.time_to_live;
+
+
+
+startTime = 0;
 frameNumber = 0;
 startDateTime = datetime.utcnow()
+print("Sending messages. CTRL+C to quit.")
 while(True):
+	# get time vector for this frame
 	t = np.arange(startTime,startTime+args.sample_time,1/args.sampling_rate,dtype=np.float32)
+	# construct the signal
 	signal = np.zeros((len(t),args.num_chan+1))
+	# first channel is time
 	signal[:,0] = t*1000 # miliseconds
-	channelNames = list();
-	channelNames.append('time');	
+	channelNames = list()
+	channelNames.append('time')
+	# for each channel, create the signal
 	for c in np.arange(args.num_chan):
 		signal[:,c+1] = makeSignal(t, freqs, args.cycle_freq)
 		channelNames.append(str(c))
 	numChannels = signal.shape[1]
 	timeStamp = int(startTime*1000)
 	# make the header
-	header = makeHeader(userName = userName, sessionID = sessionID,\
-						frameNumber = frameNumber, timeStamp = timeStamp,\
-						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,\
+	header = makeHeader(userName = userName, sessionID = sessionID,
+						frameNumber = frameNumber, timeStamp = timeStamp,
+						channelNames = channelNames, numSamples=args.sampling_rate*args.sample_time,
 						numChannels=numChannels, sampling_rate=args.sampling_rate, mlModel='default',
 						preprocessing="standard",start_datetime = startDateTime)
 	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=timeStamp)
 	print("sessionID: {}, frame: {}, now: {}, timestamp: {}, numchan: {}, fs: {}".format(sessionID, frameNumber, now, timeStamp, numChannels, args.sampling_rate))
 	
-	frame = packHeaderAndData(header,signal)
-	#headerSize = int.from_bytes(frame[0:3],byteorder='little')	
-	#vis.line(win=linwin,Y=signal[0,:])	
-	#print("frame length is:", len(frame))
-	#print("4 + {} + {} = {}".format(headerSize,sampleSize,4+headerSize+sampleSize))
-	
+	frame = packHeaderAndData(header,signal)	
 	channel.basic_publish(exchange=config['RabbitMQ']['Exchange'],
 						routing_key=config['RabbitMQ']['RoutingKey'],
 						body=frame)
-						#properties=props,
-
+	# increment start time, frame number, then sleep
 	startTime = startTime+1
 	frameNumber = frameNumber + 1
 	time.sleep(args.sample_time)
 	if(timeToLive>0 and time.time()-expirationTimer > timeToLive):
 		print("Time to live exceeded, exiting")
 		sys.exit(0)
-	#x = input();
 

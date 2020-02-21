@@ -20,11 +20,9 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-# get generic parser from utils module
+# parser and config
 parser = argparse.ArgumentParser()
-# override default argument and add argument
 parser.add_argument("-r", "--rmq-config", default="processor.conf", help="location of the configuration file")
-
 args = parser.parse_args()
 
 config = configparser.ConfigParser()
@@ -51,11 +49,18 @@ logging.getLogger("pika").setLevel(logging.WARNING)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# connection parameters for RabbitMQ
+params = pika.ConnectionParameters(	host=rmqIP, \
+									port=rmqPort,\
+									credentials=cred, \
+									virtual_host=rmqVhost)
+
 def butterworth_filter(data, cutoff, fs, type='lowpass', order=5):
 	sos = butter(order, cutoff, btype=type, output='sos',fs=fs)	
 	y = sosfilt(sos, data, axis=0)
 	return y
 
+# perform all processing
 def process(header, data):
 	#get channel number for time/TIME
 	timeChan, eeg = splitTimeAndEEG(header, data)
@@ -69,9 +74,9 @@ def process(header, data):
 	data = np.hstack([timeChan,eegfft])
 	return data;
 
-def nparray_callback(ch, method, props, body):
-	out = list();
+def nparray_callback(ch, method, props, body):	
 	global HIGHPASS_CUTOFF, LOWPASS_CUTOFF, params
+	out = list();
 	header, data = unpackHeaderAndData(body)	
 	processed_data = process(header, data)	
 	now = datetime(header['year'],header['month'],header['day'],header['hour'],header['minute'],header['second'],header['microsecond']) + timedelta(milliseconds=header['time_stamp'])
@@ -95,13 +100,6 @@ def readQueue(name):
 	channel.basic_consume(queue=in_queue, on_message_callback=nparray_callback, auto_ack=True)
 	channel.start_consuming()
 
-
-params = pika.ConnectionParameters(	host=rmqIP, \
-									port=rmqPort,\
-									credentials=cred, \
-									virtual_host=rmqVhost)
-
-	
 print(' [*] Connected to:\n\t{}\n\t{}\n [*] as {}. Waiting for messages. To exit press CTRL+C'.format(":".join([rmqIP,str(rmqPort)]),":".join([rmqVhost,rmqExchange,in_queue]), userName))
 numcpus = multiprocessing.cpu_count()
 pool = Pool(processes = numcpus)

@@ -31,20 +31,22 @@ public class EEGSerializer implements SerializationSchema<Tuple2<EEGHeader, floa
 		// 4 bytes - int32 of size of following header
 		// headerSize bytes - the JSON header
 		// nsamples*nchans bytes - the actual data, size calculated from header
+		
+		// turn the header into bytes
 		Gson gson = new Gson();		
 		String header = gson.toJson(frame.f0);
 		byte[] headerAsBytes = header.getBytes(StandardCharsets.UTF_8);
+		
+		// find out how big it is and get the headerSize as a 4 byte array
 		ByteBuffer tmp = ByteBuffer.allocate(4);
 		tmp.order(ByteOrder.LITTLE_ENDIAN);
 		tmp.putInt(headerAsBytes.length);
+		
+		// fill the final byte arrays so they can be copied into result[]
 		byte[] headerSize = tmp.array();
 		byte[] body = FloatsToBytes(frame.f1);
 		byte[] result = new byte[headerSize.length+headerAsBytes.length+body.length];
-		//System.out.println(String.format("Header size: %d \tBody size: %d", header.length, body.length));
-		//System.out.println(frame.f0);
-		// src, src pos, dst, dst pos, length
-		// System.out.println(String.format("should be sending %d, %d bytes total",headerAsBytes.length,result.length));
-		//System.out.println(header);
+
 		System.arraycopy(headerSize,0,result,0,headerSize.length);
 		System.arraycopy(headerAsBytes,0,result,headerSize.length,headerAsBytes.length);
 		System.arraycopy(body,0,result,headerSize.length+headerAsBytes.length,body.length);

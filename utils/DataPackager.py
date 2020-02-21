@@ -6,21 +6,15 @@ from datetime import datetime;
 
 def packHeaderAndData(header, data):
 	# header - dictionary of header items
-	# data   - 2 dimensional numpy.array of signals, each column(dim 0) is a channel
-	
+	# data   - 2 dimensional numpy.array of signals, each column(dim 0) is a channel	
 	j = json.dumps(header)
-#	j = j.replace("{","[")
-#	j = j.replace("}","]")	
 	headerSize = len(j)
 	fmt = "<i"+str(headerSize) + "s" + str(header['num_channels']*header['num_samples']) + "f"
-	#print(fmt)
 	o = struct.pack(fmt,headerSize,j.encode('utf-8'),*data.flatten())
 	return o
 	
 def unpackHeaderAndData(message):
 	headerSize = int.from_bytes(message[0:3],byteorder="little");
-	# print("total size is:",len(message))
-	# print("headerSize:",headerSize)
 	# "<" is little-endian
 	fmt = "<" + str(headerSize) + "s"
 	# read starting from byte 4 since bytes 0-3 are header size int
@@ -36,19 +30,16 @@ def unpackHeaderAndData(message):
 def makeHeader(userName, frameNumber, timeStamp, channelNames, \
 		numSamples,	numChannels, sessionID='', mlModel='default',\
 		preprocessing="standard", sampling_rate=250, start_datetime=0):
-	#frame number	
-	#sampling rate
-	#number of channels
 	# start_datetime is a UTC datetime
+	if(start_datetime==0):
+		start_datetime = datetime.utcnow()
 	if sessionID=='':
-		sessionID = userName;
+		sessionID = userName + str(start_datetime);
 	h = dict()
 	h['user_name']=str(userName)
 	h['session_id']=str(sessionID)
 	h['frame_number']=int(frameNumber)
 	h['time_stamp']=int(timeStamp)
-	if(start_datetime==0):
-		start_datetime = datetime.utcnow()
 	h['year']   = int(start_datetime.year)
 	h['month']  = int(start_datetime.month)
 	h['day']    = int(start_datetime.day)
