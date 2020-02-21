@@ -71,3 +71,14 @@ The "processing" queue is where the windowing worker sends its messages to be re
 
 The "ml.default" queue is where the processing worker sends its messages to be read by the machine learning model. In this case, the model is the "default" model. New models should use a routing key following the "ml.\<name\>" convention.
 
+
+### PostgreSQL
+The database is named "results", with 2 tables: "data" and "sessions"
+Sessions has 4 columns:
+|Column Name|Type|Nullable|
+|-----------|----|--------|
+|ml_model | TEXT | NOT NULL|
+|preprocessing | TEXT | NOT NULL|
+|sess_id|TEXT|NOT NULL|
+|user_name|TEXT|NOT NULL|
+
