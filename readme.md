@@ -55,7 +55,7 @@ The first major bottleneck is in the processing worker. This worker must process
 
 ## How to install and get it up and running
 ### RabbitMQ
-The following settings can be adjusted via configuration files and command line arguments (see below)
+The following settings can be adjusted via configuration files (see below)
 #### Exchange
 The default exchange used is named "eegle".
 #### Queues
@@ -73,12 +73,24 @@ The "ml.default" queue is where the processing worker sends its messages to be r
 
 
 ### PostgreSQL
+Appropriate access to the database must be set up beforehand. The username/password for the ML workers can be included in the .conf file for that worker. For the default ML worker defined by ml-consumer-default.py, these settings are available in ml-default.conf.
+
 The database is named "results", with 2 tables: "data" and "sessions"
-Sessions has 4 columns:
-|Column Name|Type|Nullable|
-|-----------|----|--------|
-|ml_model | TEXT | NOT NULL|
-|preprocessing | TEXT | NOT NULL|
-|sess_id|TEXT|NOT NULL|
-|user_name|TEXT|NOT NULL|
+sessions has 4 columns:
+|Column Name|Type|Nullable|Description|
+|-----------|----|--------|-----------|
+|ml_model | TEXT | NOT NULL| The name of the ML Model (which is used as a routing key) |
+|preprocessing | TEXT | NOT NULL| The name of the preprocessing type (used as a routing key) |
+|sess_id|TEXT|PRIMARY KEY| The session ID of a connection. This should be unique |
+|user_name|TEXT|NOT NULL| The user name of a particular session. One user may have many sessions, so this does not have to be unique|
+
+sessions is referenced by data via foreign key on sess_id
+
+data has 4 columns:
+|Column Name|Type|Nullable|Description|
+|-----------|----|--------|-----------|
+|time_ms | INTEGER | NOT NULL|Time since the start of the recording, in milliseconds|
+|class| INTEGER | NOT NULL| The classification of this record|
+|sess_id|TEXT|(FOREIGN KEY)|The session ID. This is a foreign key that references sessions(sess_id)|
+|time_in|TIMESTAMPTZ|NOT NULL|A timestamp with timezone (UTC) of the time this record came in. Currently calculated by the ML worker|
 
