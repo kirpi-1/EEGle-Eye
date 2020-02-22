@@ -72,7 +72,7 @@ The "processing" queue is where the windowing worker sends its messages to be re
 The "ml.default" queue is where the processing worker sends its messages to be read by the machine learning model. In this case, the model is the "default" model. New models should use a routing key following the "ml.\<name\>" convention.
 
 
-### PostgreSQL
+### TimescaleDB (PostgreSQL)
 Appropriate access to the database must be set up beforehand. The username/password for the ML workers can be included in the .conf file for that worker. For the default ML worker defined by ml-consumer-default.py, these settings are available in ml-default.conf.
 
 The database is named "results", with 2 tables: "data" and "sessions"
@@ -93,4 +93,6 @@ data has 4 columns:
 |class| INTEGER | NOT NULL| The classification of this record|
 |sess_id|TEXT|(FOREIGN KEY)|The session ID. This is a foreign key that references sessions(sess_id)|
 |time_in|TIMESTAMPTZ|NOT NULL|A timestamp with timezone (UTC) of the time this record came in. Currently calculated by the ML worker|
+
+Use the [create_hypertable](https://docs.timescale.com/latest/getting-started/creating-hypertables) function using the time_in column to enable timescaleDB
 
