@@ -30,7 +30,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import eegstreamer.utils.EEGHeader;
 import eegstreamer.utils.RMQEEGSource;
 import eegstreamer.process.EEGProcessWindowFunction;
-import eegstreamer.keyselector.UserKeySelector;
+import eegstreamer.keyselector.SessionIDKeySelector;
 import eegstreamer.publishoptions.MyRMQSinkPublishOptions;
 import eegstreamer.serialization.EEGDeserializationSchema;
 import eegstreamer.serialization.EEGSerializer;
