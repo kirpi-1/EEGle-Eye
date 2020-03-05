@@ -103,12 +103,25 @@ public class EEGStream{
 		}
 		float PROCESSING_WINDOW_OVERLAP = 0.8f;
 		try{
-			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","0.8"));
+			PROCESSING_WINDOW_OVERLAP = Float.parseFloat(defaultProps.getProperty("WINDOW_OVERLAP","0.8"));
 		}
 		catch (NumberFormatException nfe){
 			PROCESSING_WINDOW_OVERLAP = 0.8f;
 		}
-		
+		float TIME_WINDOW = 2;
+		try{
+			TIME_WINDOW = Float.parseFloat(defaultProps.getProperty("WINDOW_STREAM_SIZE","2"));
+		}
+		catch(NumberFormatException nfe){
+			TIME_WINDOW = 2;
+		}
+		float TIME_SLIDE = 1;
+		try{
+			TIME_SLIDE = Float.parseFloat(defaultProps.getProperty("WINDOW_SLIDE_LENGTH","1"));
+		}
+		catch(NumberFormatException nfe){
+			TIME_SLIDE = 1;
+		}
 		
 		
 		// start flink stream
@@ -136,7 +149,7 @@ public class EEGStream{
 
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new UserKeySelector())
-			.timeWindow(Time.seconds(2),Time.seconds(1))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
+			.timeWindow(Time.seconds(TIME_WINDOW),Time.seconds(TIME_SLIDE))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
 			.process(new EEGProcessWindowFunction()
 							.setWindowLength(PROCESSING_WINDOW_LENGTH)
 							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
