@@ -156,7 +156,7 @@ public class EEGStream{
 		// window by time, get last 2 seconds worth of data since that is smallest amount that can be worked on
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new SessionIDKeySelector())
-			.timeWindow(Time.seconds(TIME_WINDOW),Time.seconds(TIME_SLIDE))
+			.timeWindow(Time.milliseconds((long)TIME_WINDOW*1000),Time.milliseconds((long)TIME_SLIDE*1000))
 			.process(new EEGProcessWindowFunction()
 							.setWindowLength(PROCESSING_WINDOW_LENGTH)
 							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
