@@ -27,11 +27,11 @@ public class EEGProcessWindowFunction
 		this.windowLengthInSec = newLength;
 		return this;
 	}
+	
 	public EEGProcessWindowFunction setWindowOverlap(float newLength){
 		this.windowOverlap = newLength;
 		return this;
-	}
-	
+	}	
 	
 	@Override
 	public void process(String key, 
@@ -39,9 +39,9 @@ public class EEGProcessWindowFunction
 						Iterable<Tuple3<Integer,EEGHeader,float[]>> frames, 
 						Collector<Tuple2<EEGHeader, float[]>> out)
 			throws Exception
-	{
+	{	
+		// This function windows the data in the frames and sends them on their way
 		long numMsgs = frames.spliterator().getExactSizeIfKnown();		
-//		log.info(String.format("Received %d messages!", numMsgs));
 		float[] data= new float[0];
 		int lastIdx = 0; //remembers the last index that was processed
 		int frameLen = 0; //length of each frame (should be 250 during testing)
@@ -57,10 +57,8 @@ public class EEGProcessWindowFunction
 			if(idx==0){
 				lastIdx = frame.f0;
 				frameLen = frameData.length;
-				//header = frame.f1;
 			}
 			header = frame.f1;
-			//log.info(String.format("    [x] %d numbers from %d to %d",i.length,i[0],i[i.length-1]));
 			//get the current lenth of the data array
 			int prevLength = data.length;
 			//make a new copy of the data array that will allow pasting
@@ -78,11 +76,11 @@ public class EEGProcessWindowFunction
         	log.debug(String.format("num samples : %d", header.num_samples));
         	log.debug(String.format("    %s",header.channel_names));
         	log.debug("=====================================");
-			//System.out.println(String.format("Processing: %s",header));
 		}
 		if(numMsgs==1)
 			frameLen=0;
-		// find which channel is the time channel so I can use it for correct timestamping
+		// find which channel is the time channel so it can be used for correct timestamping
+		// it is not guaranteed to be channel 0, nor is it guaranteed to exist
 		String timeString = "time";
 		for(String s : header.channel_names){
 			if(s.toLowerCase().equals("time")){

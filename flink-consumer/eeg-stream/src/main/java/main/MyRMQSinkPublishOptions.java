@@ -7,7 +7,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import eegstreamer.utils.EEGHeader;
 
 public class MyRMQSinkPublishOptions implements RMQSinkPublishOptions<Tuple2<EEGHeader, float[]>> {
-	public String queueName;
+	public String queueName; // actually should be named routingKey
 	public MyRMQSinkPublishOptions setQueueName(String newName){
 		this.queueName = newName;
 		return this;

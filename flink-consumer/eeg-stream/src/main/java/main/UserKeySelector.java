@@ -15,7 +15,7 @@ import com.google.gson.JsonParser;
 
 import eegstreamer.utils.EEGHeader;
 
-public class UserKeySelector implements KeySelector<Tuple3<Integer, EEGHeader, float[]>, String>{
+public class SessionIDKeySelector implements KeySelector<Tuple3<Integer, EEGHeader, float[]>, String>{
 	@Override
 	public String getKey(Tuple3<Integer, EEGHeader, float []> frame){
 		return frame.f1.session_id;

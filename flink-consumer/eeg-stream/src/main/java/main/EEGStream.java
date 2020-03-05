@@ -44,6 +44,7 @@ import org.apache.commons.cli.ParseException;
 
 public class EEGStream{
 	public static void main(String[] args) throws Exception {
+		// options builder for using config file
 		Options options = new Options();
 		Option configOptions = Option.builder("c")
 								.required(false)
@@ -108,6 +109,7 @@ public class EEGStream{
 		catch (NumberFormatException nfe){
 			PROCESSING_WINDOW_OVERLAP = 0.8f;
 		}
+
 		float TIME_WINDOW = 2;
 		try{
 			TIME_WINDOW = Float.parseFloat(defaultProps.getProperty("WINDOW_STREAM_SIZE","2"));
@@ -124,6 +126,9 @@ public class EEGStream{
 		}
 		
 		
+		// ****************************** Actual Start of flink code ************************************
+
+		
 		// start flink stream
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// required for exactly-once or at-least-once guarantees
@@ -136,7 +141,8 @@ public class EEGStream{
 			.setPassword(RMQ_PASSWORD)
 			.setVirtualHost(RMQ_VHOST)
 			.build();
-
+		
+		// create a stream with RabbitMQ source
 		DataStream<Tuple3<Integer, EEGHeader, float[]>> stream = env.addSource(
 			new RMQEEGSource(
 					connectionConfig,
@@ -146,23 +152,22 @@ public class EEGStream{
 					)
 			).setParallelism(1); //non-parallel source is only required for exactly-once
 			
-
+		// key the data by sessionID, which is unique
+		// window by time, get last 2 seconds worth of data since that is smallest amount that can be worked on
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
+<<<<<<< HEAD
 			.keyBy(new UserKeySelector())
 			.timeWindow(Time.seconds(TIME_WINDOW),Time.seconds(TIME_SLIDE))//.timeWindowAll(Time.seconds(2), Time.seconds(1))
+=======
+			.keyBy(new SessionIDKeySelector())
+			.timeWindow(Time.seconds(2),Time.seconds(1))
+>>>>>>> d44bcba771d899a2bdb006e58b39050fc2abcd87
 			.process(new EEGProcessWindowFunction()
 							.setWindowLength(PROCESSING_WINDOW_LENGTH)
 							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
 							);
-
-		RMQConnectionConfig sinkConfig = new RMQConnectionConfig.Builder()
-			.setHost(RMQ_SERVER)
-			.setPort(RMQ_PORT)
-			.setUserName(RMQ_USERNAME)
-			.setPassword(RMQ_PASSWORD)
-			.setVirtualHost(RMQ_VHOST)
-			.build();
 		
+		// add the output
 		tmpout.addSink(new RMQSink<Tuple2<EEGHeader, float[]>>(
 			connectionConfig, 
 			new EEGSerializer(),
@@ -170,7 +175,7 @@ public class EEGStream{
 					.setQueueName(RMQ_PUBLISH_QUEUE))
 		);
 
-		//stream.print();
+		//execute the job
 		env.execute();
 
 	}

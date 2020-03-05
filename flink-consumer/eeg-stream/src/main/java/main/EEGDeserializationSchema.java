@@ -22,10 +22,11 @@ import com.google.gson.JsonParser;
 import eegstreamer.utils.EEGHeader;
 
 public class EEGDeserializationSchema extends AbstractDeserializationSchema<Tuple3<Integer, EEGHeader, float[]>> {
-
+	// take advantage of Gson and the JSON header for easy deserialization
 	final static Logger log = LogManager.getLogger(EEGDeserializationSchema.class.getName());
 
 	public static float[] BytesToFloats(ByteBuffer buff,int offset){
+		// turn a byte array into float array
 		float[] res = new float[(buff.array().length-offset)/4];
 		buff.position(offset);
 		for(int i=0;i<res.length;i++){
