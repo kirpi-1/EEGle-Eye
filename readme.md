@@ -51,11 +51,8 @@ EEG data is time dependent. Each message needs to be in order as it arrives to t
 
 The first major bottleneck is in the processing worker. This worker must process a multiple of the input messages. By default, for every one input message, the processing worker must process 5 messages (there is an 80% overlap by default)
 
-## Trade-offs
-
 ## How to install and get it up and running
 ### RabbitMQ
-The following settings can be adjusted via configuration files (see below)
 #### Exchange
 The default exchange used is named "eegle".
 #### Queues
@@ -96,3 +93,20 @@ data has 4 columns:
 
 Use the [create_hypertable](https://docs.timescale.com/latest/getting-started/creating-hypertables) function using the time_in column to enable timescaleDB
 
+### EEG Producer
+For ease of inspection, an EEG simulator was included, named "dummy-eeg.py". Settings for the producer, including RabbitMQ server IPs, are located in producer.conf. After 1 minute of producing data, the program will exit.
+
+A bash script, named "run_producers.sh", takes one input, which is used to determine the number of copies of dummy-eeg to run, each with a randomly determined cycle frequency.
+
+### Flink Windower
+The flink windower looks for a configuration file by default in <user_home>/eeg-stream.conf. An argument specifying the location of the configuration file can also be passed in. The configuration file has information regarding the RabbitMQ connection as well as how many seconds to use as a stream window and how much to slide by (by default, 2 second window and 1 second slide)
+
+### EEG Processor
+Included is "standard-processor.py" which applies a fourier transform and some butterworth filters to the data. For an actual release, the actual code for processing would be abstracted out into a separate file. These scripts would take as an input and output data in the form of the data structure defined by utils/DataPackager.py. The manager script would read each data package, determine the processing type requested, then run the appropriate script on the data.
+
+This also has a configuration file under "processor.conf" for configuring RabbitMQ
+
+### ML Model
+Included is "ml-consumer-default.py" which classifies incoming data as 0 or 1 based on its timestamp. This is arbitrary and used for ease of inspection. Similarly to the processor, actual use would have the main model processor script read each data package, determine the desired machine learning model, then run a script which takes the data package as an input and outputs a class (int).
+
+This also has a configuration file under "ml-default.conf".
