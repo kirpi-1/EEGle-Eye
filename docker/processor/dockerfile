@@ -1,0 +1,7 @@
+FROM python:3.6-slim
+
+ADD . /
+
+RUN pip install pika numpy
+
+CMD ["python3", "./standard-processor.py"]
