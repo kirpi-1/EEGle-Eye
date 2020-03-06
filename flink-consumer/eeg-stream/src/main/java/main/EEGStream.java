@@ -30,7 +30,7 @@ import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import eegstreamer.utils.EEGHeader;
 import eegstreamer.utils.RMQEEGSource;
 import eegstreamer.process.EEGProcessWindowFunction;
-import eegstreamer.keyselector.UserKeySelector;
+import eegstreamer.keyselector.SessionIDKeySelector;
 import eegstreamer.publishoptions.MyRMQSinkPublishOptions;
 import eegstreamer.serialization.EEGDeserializationSchema;
 import eegstreamer.serialization.EEGSerializer;
@@ -104,13 +104,30 @@ public class EEGStream{
 		}
 		float PROCESSING_WINDOW_OVERLAP = 0.8f;
 		try{
-			PROCESSING_WINDOW_OVERLAP = Integer.parseInt(defaultProps.getProperty("WINDOW_OVERLAP","0.8"));
+			PROCESSING_WINDOW_OVERLAP = Float.parseFloat(defaultProps.getProperty("WINDOW_OVERLAP","0.8"));
 		}
 		catch (NumberFormatException nfe){
 			PROCESSING_WINDOW_OVERLAP = 0.8f;
 		}
+
+		float TIME_WINDOW = 2;
+		try{
+			TIME_WINDOW = Float.parseFloat(defaultProps.getProperty("WINDOW_STREAM_SIZE","2"));
+		}
+		catch(NumberFormatException nfe){
+			TIME_WINDOW = 2;
+		}
+		float TIME_SLIDE = 1;
+		try{
+			TIME_SLIDE = Float.parseFloat(defaultProps.getProperty("WINDOW_SLIDE_LENGTH","1"));
+		}
+		catch(NumberFormatException nfe){
+			TIME_SLIDE = 1;
+		}
+		
 		
 		// ****************************** Actual Start of flink code ************************************
+
 		
 		// start flink stream
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -139,7 +156,7 @@ public class EEGStream{
 		// window by time, get last 2 seconds worth of data since that is smallest amount that can be worked on
 		DataStream<Tuple2<EEGHeader, float[]>> tmpout = stream
 			.keyBy(new SessionIDKeySelector())
-			.timeWindow(Time.seconds(2),Time.seconds(1))
+			.timeWindow(Time.milliseconds((long)TIME_WINDOW*1000),Time.milliseconds((long)TIME_SLIDE*1000))
 			.process(new EEGProcessWindowFunction()
 							.setWindowLength(PROCESSING_WINDOW_LENGTH)
 							.setWindowOverlap(PROCESSING_WINDOW_OVERLAP)
