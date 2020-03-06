@@ -1,0 +1,4 @@
+FROM python:3.6
+
+ADD standard-processor /
+run pip install pika numpy
