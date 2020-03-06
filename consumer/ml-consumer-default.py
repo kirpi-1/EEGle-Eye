@@ -110,7 +110,7 @@ def processQueue(name):
 	# each worker thread needs to make a connection
 	global params
 	queue = "ml." + args.MLmodel	
-	sessionList = list()
+	#sessionList = list()
 	connection = pika.BlockingConnection(params)
 	channel = connection.channel()
 	channel.queue_declare(queue=queue,passive = True,durable = True)
@@ -120,7 +120,7 @@ def processQueue(name):
 	#channel.basic_consume(queue=queue, on_message_callback=newCallback, auto_ack=True)
 
 	channel.start_consuming()
-
+sessionList = list()
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
